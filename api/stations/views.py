@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask.json import jsonify
 
-from .models import Stations
+from .models import Station
 
 bp = Blueprint("stations", __name__, url_prefix="/stations")
 
@@ -13,4 +13,4 @@ def meta():
 
 @bp.route("/<int:practice_id>")
 def stations(practice_id):
-    return jsonify(Stations.query.get(practice_id).serialize())
+    return jsonify(Station.query.get(practice_id).serialize())

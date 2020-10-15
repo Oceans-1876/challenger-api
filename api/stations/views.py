@@ -11,6 +11,6 @@ def meta():
     return jsonify({})
 
 
-@bp.route("/<int:practice_id>")
-def stations(practice_id):
-    return jsonify(Station.query.get(practice_id).serialize())
+@bp.route("/")
+def stations():
+    return jsonify(Station.query.all())

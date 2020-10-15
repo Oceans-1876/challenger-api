@@ -30,20 +30,6 @@ class Station(db.Model):
     air_conditions = db.relationship("AirCondition", backref="station", lazy=True)
     images = db.relationship("Image", backref="station", lazy=True)
 
-    def serialize(self):
-        return {
-            "id": self.id,
-            "meta": self.meta,
-            "station": self.station,
-            "location_name": self.location_name,
-            "location_original_text": self.location_original_text,
-            "location_point": self.location_point,
-            "species": self.species,
-            "water_conditions": self.water_conditions,
-            "air_conditions": self.air_conditions,
-            "images": self.images,
-        }
-
 
 class Meta(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,7 +58,6 @@ class Image(db.Model):
 
 class WaterCondition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    station = db.relationship("Station", backref="station", lazy=True, uselist=False)
     station_id = db.Column(db.Integer, db.ForeignKey("station.id"), nullable=False)
     date = db.Column(db.Date)
     # TODO add attributes

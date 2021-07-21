@@ -2,14 +2,12 @@ import pandas as pd
 import psycopg2
 import os
 from sqlalchemy import create_engine
-#import ppygis
 from geoalchemy2 import Geometry
 import math
 
 
 rootPath = "/home/mwiecksosa/oceans1876/"
 dataPath = rootPath+"data/"
-
 
 
 def main():
@@ -73,8 +71,6 @@ def single_insert(conn, insert_req):
         cursor.close()
         return 1
     cursor.close()
-
-
 
 
 def insertStations(df_stationLines,df_verifiedSpeciesNames,df_stationEnvironmentInfo,engine,param_dic):
@@ -206,7 +202,6 @@ def insertStations(df_stationLines,df_verifiedSpeciesNames,df_stationEnvironment
     # do we even need this?
 
     """
-
 
 
 def insertSpeciesStations(df_stationLines,df_verifiedSpeciesNames,df_stationEnvironmentInfo,engine,param_dic):
@@ -409,7 +404,6 @@ def insertWaterCondition(df_stationLines,df_verifiedSpeciesNames,df_stationEnvir
 
     waterConditionsDF.to_sql('water_condition', engine, if_exists='append', index=False, chunksize=1000)
 
-
     """
     conn = connect(param_dic)
 
@@ -477,6 +471,6 @@ def insertAirCondition(df_stationLines,df_verifiedSpeciesNames,df_stationEnviron
 
     """
 
-=
+
 if __name__ == '__main__':
     main()

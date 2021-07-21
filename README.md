@@ -27,3 +27,13 @@ All arguments passed to `./manage` get passed to `flask` command directly. This 
 `-h` shows help and `-d` calls `flask` with development variables.
 
 In order to run the server in development mode, call `./manage -d run`.
+
+### Build Docker
+
+`sh docker.sh`
+
+### Run Docker
+
+Look at env-example for an example environment file and update parameters.
+
+`docker run -p 5000:5000 --network host --env-file env-example oceans-1876/api`

@@ -1,5 +1,5 @@
 import json
-
+import os
 from flask import Flask
 from sqlalchemy import func
 from sqlalchemy.ext.declarative import DeclarativeMeta
@@ -42,6 +42,8 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
     if test_config is None:
+        # Set defaults and override with config.py
+        app.config.from_object(DefaultConfig)
         app.config.from_pyfile("config.py", silent=True)
     else:
         app.config.update(test_config)
@@ -56,3 +58,20 @@ def create_app(test_config=None):
     app.register_blueprint(stations.bp)
 
     return app
+
+
+class Config(object):
+    SQLALCHEMY_DATABASE_URI = ""
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    ENV = "Development"
+    DEBUG = True
+    SECRET_KEY = "dev"
+
+
+class DefaultConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv("SQLALCHEMY_TRACK_MODIFICATIONS")
+    DEBUG = os.getenv("DEBUG")
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    ENV = os.getenv("ENV")
+

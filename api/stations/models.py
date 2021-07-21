@@ -148,7 +148,6 @@ class Image(db.Model):
 
 class WaterCondition(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    station = db.relationship("Station", backref="station", lazy=True, uselist=False)
     station_id = db.Column(db.Integer, db.ForeignKey("station.id"), nullable=False)
 
     #date = db.Column(db.Date)

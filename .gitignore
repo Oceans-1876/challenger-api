@@ -17,3 +17,6 @@ ipython_config.py
 
 # Environments
 venv/
+
+# IDE
+.idea

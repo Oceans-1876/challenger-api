@@ -10,4 +10,3 @@ WORKDIR /root/service
 COPY . /root/service
 
 CMD ["./manage", "-d", "run"]
-

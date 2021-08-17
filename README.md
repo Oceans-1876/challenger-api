@@ -25,3 +25,7 @@ Before contributing to the code, make sure to install `pre-commit`: `pre-commit 
 | run_dev_server.sh       | Starts the API dev server.                                                                                                                                                  |
 | run_migrations.sh       | Applies the migrations from `alembic/versions`.                                                                                                                             |
 | run_tests.sh            | Runs the tests with `pytest` with coverage report.  It handles creation of a test database for `POSTGRES_TEST_DB` set in `.env`.                                            |
+
+### Usage
+
+You can see all the available endpoints at `/docs`.

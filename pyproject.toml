@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "oceans-1876-api"
+version = "0.1.0"
+description = ""
+authors = ["Kaveh Karimi <kaveh@illinois.edu>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+uvicorn = "^0.14"
+fastapi = "^0.68"
+passlib = {extras = ["bcrypt"], version = "^1.7"}
+tenacity = "^8.0"
+pydantic = {extras = ["dotenv", "email"], version = "^1.8.2"}
+emails = "^0.6"
+raven = "^6.10"
+gunicorn = "^20.1"
+jinja2 = "^3.0"
+psycopg2-binary = "^2.9"
+alembic = "^1.6"
+sqlalchemy = "^1.4"
+python-jose = {extras = ["cryptography"], version = "^3.3"}
+python-multipart = "^0.0.5"
+GeoAlchemy2 = "^0.9.3"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.910"
+black = "^21.7b0"
+isort = "^5.9"
+autoflake = "^1.4"
+flake8 = "^3.9"
+pytest = "^6.2"
+sqlalchemy-stubs = "^0.4"
+pytest-cov = "^2.12"
+pre-commit = "^2.14.0"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 88
+
+[build-system]
+requires = ["poetry>=1.1"]
+build-backend = "poetry.masonry.api"

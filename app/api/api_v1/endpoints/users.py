@@ -22,7 +22,24 @@ def read_users(
     limit: int = 100,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    """Retrieve users."""
+    """read_users: Retrieve users.
+
+    Parameters
+    ----------
+    db : Session
+        The database session, by default Depends(deps.get_db)
+    skip : int, optional
+        The offset to start fetching records from, by default 0
+    limit : int, optional
+        The number of records to return, by default 100
+    current_user : models.User, optional
+        Instance of User having SuperUser privileges, by default Depends(deps.get_current_active_superuser)
+
+    Returns
+    -------
+    Any
+        List of Users.
+    """
     users = crud.user.get_multi(db, skip=skip, limit=limit)
     return users
 
@@ -34,8 +51,26 @@ def create_user(
     user_in: schemas.UserCreate,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    """
-    Create new user.
+    """create_user: Create new user.
+
+    Parameters
+    ----------
+    user_in : schemas.UserCreate
+        Incoming user data which is to be added to the database.
+    db : Session
+        The database session, by default Depends(deps.get_db)
+    current_user : models.User, optional
+         Instance of User having SuperUser privileges, by default Depends(deps.get_current_active_superuser)
+
+    Returns
+    -------
+    Any
+        Instance of the created User.
+
+    Raises
+    ------
+    HTTPException
+        Raised when the user tries to create account with existing email in the database.
     """
     user = crud.user.get_by_email(db, email=user_in.email)
     if user:
@@ -60,8 +95,25 @@ def update_user_me(
     email: EmailStr = Body(None),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Update own user.
+    """update_user_me: Update own user.
+
+    Parameters
+    ----------
+    db : Session
+        The database session, by default Depends(deps.get_db)
+    password : str, optional
+        Password to be updated by the user, by default Body(None)
+    full_name : str, optional
+        Full name to be updated by the user, by default Body(None)
+    email : EmailStr, optional
+        Email to be updated by the user, by default Body(None)
+    current_user : models.User, optional
+        An instance of User who is an active user, by default Depends(deps.get_current_active_user)
+
+    Returns
+    -------
+    Any
+        Updated instance of the User.
     """
     current_user_data = jsonable_encoder(current_user)
     user_in = schemas.UserUpdate(**current_user_data)
@@ -80,8 +132,19 @@ def read_user_me(
     db: Session = Depends(deps.get_db),
     current_user: models.User = Depends(deps.get_current_active_user),
 ) -> Any:
-    """
-    Get current user.
+    """read_user_me: Get current user.
+
+    Parameters
+    ----------
+    db : Session, optional
+        The database session, by default Depends(deps.get_db)
+    current_user : models.User, optional
+        An instance of User who is an active user, by default Depends(deps.get_current_active_user)
+
+    Returns
+    -------
+    Any
+        Instance of the User.
     """
     return current_user
 
@@ -94,8 +157,30 @@ def create_user_open(
     email: EmailStr = Body(...),
     full_name: str = Body(None),
 ) -> Any:
-    """
-    Create new user without the need to be logged in.
+    """create_user_open: Create new user without the need to be logged in.
+
+    Parameters
+    ----------
+    db : Session
+        The database session, by default Depends(deps.get_db)
+    password : str, optional
+        Password of the open user, by default Body(...)
+    email : EmailStr, optional
+        Email of the open user, by default Body(...)
+    full_name : str, optional
+        Full name of the user, by default Body(None)
+
+    Returns
+    -------
+    Any
+        Instance of the created User.
+
+    Raises
+    ------
+    HTTPException
+        [description]
+    HTTPException
+        [description]
     """
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
@@ -119,8 +204,26 @@ def read_user_by_id(
     current_user: models.User = Depends(deps.get_current_active_user),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Get a specific user by id.
+    """read_user_by_id: Get a specific user by id.
+
+    Parameters
+    ----------
+    user_id : int
+        Primary key of the User to be fetched.
+    current_user : models.User, optional
+        An instance of User who is an active user, by default Depends(deps.get_current_active_user)
+    db : Session, optional
+        The database session, by default Depends(deps.get_db)
+
+    Returns
+    -------
+    Any
+        Instance of the fetched User if found.
+
+    Raises
+    ------
+    HTTPException
+        Raised when a superuser has not initiated the request.
     """
     user = crud.user.get(db, id=user_id)
     if user == current_user:
@@ -140,8 +243,28 @@ def update_user(
     user_in: schemas.UserUpdate,
     current_user: models.User = Depends(deps.get_current_active_superuser),
 ) -> Any:
-    """
-    Update a user.
+    """update_user: Update a user.
+
+    Parameters
+    ----------
+    user_id : int
+        Primary key of the User to be updated.
+    user_in : schemas.UserUpdate
+        Schema for the user data to be updated.
+    db : Session, optional
+        The database session, by default Depends(deps.get_db)
+    current_user : models.User, optional
+        Instance of the User having SuperUser privileges, by default Depends(deps.get_current_active_superuser)
+
+    Returns
+    -------
+    Any
+        Instance of the updated User.
+
+    Raises
+    ------
+    HTTPException
+        Raised when the User isn't found.
     """
     user = crud.user.get(db, id=user_id)
     if not user:

@@ -29,6 +29,28 @@ def get_db() -> Generator:
 def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> models.User:
+    """get_current_user fetches the currently logged in user by using the generated token for the particular user.
+
+    Parameters
+    ----------
+    db : Session
+        The database session, by default Depends(get_db)
+    token : str
+        The token is extracted form the users system local storage by the OAuth2PasswordBearer function,
+        by default Depends(reusable_oauth2)
+
+    Returns
+    -------
+    models.User
+        If the User is found in the database then it is returned, otherwise, en exception is raised.
+
+    Raises
+    ------
+    HTTPException
+        Raised when Invalid credentials are provided and the jwt can't decode the token.
+    HTTPException
+        Rasied when the extracted information of the user from the token cannot fetch a valid user from the database.
+    """
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[security.ALGORITHM]
@@ -48,6 +70,23 @@ def get_current_user(
 def get_current_active_user(
     current_user: models.User = Depends(get_current_user),
 ) -> models.User:
+    """get_current_active_user
+
+    Parameters
+    ----------
+    current_user : models.User
+        Current User from the database, by default Depends(get_current_user)
+
+    Returns
+    -------
+    models.User
+        Active User is returned upon validation.
+
+    Raises
+    ------
+    HTTPException
+        Raised when the User found, isn't active.
+    """
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
@@ -56,6 +95,23 @@ def get_current_active_user(
 def get_current_active_superuser(
     current_user: models.User = Depends(get_current_user),
 ) -> models.User:
+    """get_current_active_superuser
+
+    Parameters
+    ----------
+    current_user : models.User
+        Current User from the database, by default Depends(get_current_user)
+
+    Returns
+    -------
+    models.User
+        Active SuperUser is returned upon validation.
+
+    Raises
+    ------
+    HTTPException
+        Raised when the User found, isn't an active SuperUser.
+    """
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"

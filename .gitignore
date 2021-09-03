@@ -5,9 +5,11 @@ __pycache__/
 .cache
 .coverage
 htmlcov
+.vscode/
 
 # Environments
 venv/
+.env
 
 # Data
 resources/

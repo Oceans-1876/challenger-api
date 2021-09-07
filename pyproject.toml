@@ -6,7 +6,7 @@ authors = ["Kaveh Karimi <kaveh@illinois.edu>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-uvicorn = "^0.14"
+uvicorn = "^0.15"
 fastapi = "^0.68"
 passlib = {extras = ["bcrypt"], version = "^1.7"}
 tenacity = "^8.0"
@@ -20,7 +20,8 @@ alembic = "^1.6"
 sqlalchemy = "^1.4"
 python-jose = {extras = ["cryptography"], version = "^3.3"}
 python-multipart = "^0.0.5"
-GeoAlchemy2 = "^0.9.3"
+GeoAlchemy2 = "^0.9"
+SQLAlchemy = {extras = ["mypy"], version = "^1.4"}
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.910"
@@ -29,9 +30,9 @@ isort = "^5.9"
 autoflake = "^1.4"
 flake8 = "^3.9"
 pytest = "^6.2"
-sqlalchemy-stubs = "^0.4"
 pytest-cov = "^2.12"
-pre-commit = "^2.14.0"
+pre-commit = "^2.14"
+sqlalchemy2-stubs = "^0.0.2a15"
 
 [tool.isort]
 multi_line_output = 3

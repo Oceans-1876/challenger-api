@@ -33,7 +33,8 @@ def read_users(
     limit : int, optional
         The number of records to return, by default 100
     current_user : models.User, optional
-        Instance of User having SuperUser privileges, by default Depends(deps.get_current_active_superuser)
+        Instance of User having SuperUser privileges,
+        by default Depends(deps.get_current_active_superuser)
 
     Returns
     -------
@@ -60,7 +61,8 @@ def create_user(
     db : Session
         The database session, by default Depends(deps.get_db)
     current_user : models.User, optional
-         Instance of User having SuperUser privileges, by default Depends(deps.get_current_active_superuser)
+         Instance of User having SuperUser privileges,
+         by default Depends(deps.get_current_active_superuser)
 
     Returns
     -------
@@ -70,7 +72,8 @@ def create_user(
     Raises
     ------
     HTTPException
-        Raised when the user tries to create account with existing email in the database.
+        Raised when the user tries to create account with
+        existing email in the database.
     """
     user = crud.user.get_by_email(db, email=user_in.email)
     if user:
@@ -108,7 +111,8 @@ def update_user_me(
     email : EmailStr, optional
         Email to be updated by the user, by default Body(None)
     current_user : models.User, optional
-        An instance of User who is an active user, by default Depends(deps.get_current_active_user)
+        An instance of User who is an active user,
+        by default Depends(deps.get_current_active_user)
 
     Returns
     -------
@@ -139,7 +143,8 @@ def read_user_me(
     db : Session, optional
         The database session, by default Depends(deps.get_db)
     current_user : models.User, optional
-        An instance of User who is an active user, by default Depends(deps.get_current_active_user)
+        An instance of User who is an active user,
+        by default Depends(deps.get_current_active_user)
 
     Returns
     -------
@@ -178,7 +183,8 @@ def create_user_open(
     Raises
     ------
     HTTPException
-        Raised if open user registeration is not allowed on the server or if the username is already in the system.
+        Raised if open user registeration is not allowed on
+        the server or if the username is already in the system.
     """
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(
@@ -209,7 +215,8 @@ def read_user_by_id(
     user_id : int
         Primary key of the User to be fetched.
     current_user : models.User, optional
-        An instance of User who is an active user, by default Depends(deps.get_current_active_user)
+        An instance of User who is an active user,
+        by default Depends(deps.get_current_active_user)
     db : Session, optional
         The database session, by default Depends(deps.get_db)
 
@@ -252,7 +259,8 @@ def update_user(
     db : Session, optional
         The database session, by default Depends(deps.get_db)
     current_user : models.User, optional
-        Instance of the User having SuperUser privileges, by default Depends(deps.get_current_active_superuser)
+        Instance of the User having SuperUser privileges,
+        by default Depends(deps.get_current_active_superuser)
 
     Returns
     -------

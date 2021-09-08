@@ -10,7 +10,8 @@ from app.schemas.user import UserCreate, UserUpdate
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
-        """get_by_email function fetches a User from the Database based on their email.
+        """get_by_email function fetches a User from the
+            Database based on their email.
 
         Parameters
         ----------
@@ -34,7 +35,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db : Session
             The database session.
         obj_in : UserCreate
-            Predefined User creation schema object containing data to be added to the database.
+            Predefined User creation schema object containing
+            data to be added to the database.
 
         Returns
         -------

@@ -22,7 +22,8 @@ def test_email(
     email_to : EmailStr
         A pydantic Model to validate Email String.
     current_user : models.User, optional
-        Instance of the current superuser, by default Depends(deps.get_current_active_superuser)
+        Instance of the current superuser,
+        by default Depends(deps.get_current_active_superuser)
 
     Returns
     -------

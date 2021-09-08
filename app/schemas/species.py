@@ -11,9 +11,9 @@ class SpeciesBase(BaseModel):
     matched_canonical_simple_name: Optional[str] = None
     matched_canonical_full_name: Optional[str] = None
     common_name: Optional[str] = None
-    classification_path: str
-    classification_ranks: str
-    classification_ids: str
+    classification_path: Optional[str]
+    classification_ranks: Optional[str]
+    classification_ids: Optional[str]
     data_source_id: int
 
 

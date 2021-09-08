@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 stations_species_table = Table(
     "stations_species",
     Base.metadata,
-    Column("station_id", ForeignKey("stations.id"), primary_key=True),
+    Column("station_id", ForeignKey("stations.name"), primary_key=True),
     Column("species_id", ForeignKey("species.id"), primary_key=True),
 )
 
@@ -32,8 +32,7 @@ stations_species_table = Table(
 class Station(Base):
     __tablename__ = "stations"
 
-    id: int = Column(Integer, primary_key=True, index=True)
-    name: str = Column(String(length=20), nullable=False)
+    name: str = Column(String(length=20), primary_key=True, index=True)
     sediment_sample: Optional[str] = Column(String(length=50))
     coordinates: WKBElement = Column(
         Geometry("POINT", srid=4326, spatial_index=True),

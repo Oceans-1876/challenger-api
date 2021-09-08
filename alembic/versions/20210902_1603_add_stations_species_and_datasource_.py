@@ -31,8 +31,7 @@ def upgrade():
     )
     op.create_table(
         "stations",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(length=20), nullable=True),
+        sa.Column("name", sa.String(length=20), nullable=False),
         sa.Column("sediment_sample", sa.String(length=50), nullable=True),
         sa.Column(
             "coordinates",
@@ -59,9 +58,9 @@ def upgrade():
         sa.Column("specific_gravity_at_surface", sa.Float(), nullable=True),
         sa.Column("water_temp_c_at_depth_fathoms", sa.JSON(), nullable=False),
         sa.Column("text", sa.Text(), nullable=False),
-        sa.PrimaryKeyConstraint("id"),
+        sa.PrimaryKeyConstraint("name"),
     )
-    op.create_index(op.f("ix_stations_id"), "stations", ["id"], unique=False)
+    op.create_index(op.f("ix_stations_name"), "stations", ["name"], unique=False)
     op.create_table(
         "species",
         sa.Column("id", sa.String(length=300), nullable=False),
@@ -71,9 +70,9 @@ def upgrade():
         ),
         sa.Column("matched_canonical_full_name", sa.String(length=300), nullable=True),
         sa.Column("common_name", sa.String(length=300), nullable=True),
-        sa.Column("classification_path", sa.String(length=800)),
-        sa.Column("classification_ranks", sa.String(length=800)),
-        sa.Column("classification_ids", sa.String(length=800)),
+        sa.Column("classification_path", sa.String(length=800), nullable=True),
+        sa.Column("classification_ranks", sa.String(length=800), nullable=True),
+        sa.Column("classification_ids", sa.String(length=800), nullable=True),
         sa.Column("data_source_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["data_source_id"],
@@ -84,7 +83,7 @@ def upgrade():
     op.create_index(op.f("ix_species_id"), "species", ["id"], unique=False)
     op.create_table(
         "stations_species",
-        sa.Column("station_id", sa.Integer(), nullable=False),
+        sa.Column("station_id", sa.String(length=20), nullable=False),
         sa.Column("species_id", sa.String(length=300), nullable=False),
         sa.ForeignKeyConstraint(
             ["species_id"],
@@ -92,7 +91,7 @@ def upgrade():
         ),
         sa.ForeignKeyConstraint(
             ["station_id"],
-            ["stations.id"],
+            ["stations.name"],
         ),
         sa.PrimaryKeyConstraint("station_id", "species_id"),
     )
@@ -104,7 +103,7 @@ def downgrade():
     op.drop_table("stations_species")
     op.drop_index(op.f("ix_species_id"), table_name="species")
     op.drop_table("species")
-    op.drop_index(op.f("ix_stations_id"), table_name="stations")
+    op.drop_index(op.f("ix_stations_name"), table_name="stations")
     op.drop_table("stations")
     op.drop_index(op.f("ix_data_sources_title"), table_name="data_sources")
     op.drop_index(op.f("ix_data_sources_id"), table_name="data_sources")

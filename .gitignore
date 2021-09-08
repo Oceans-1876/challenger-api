@@ -6,6 +6,7 @@ __pycache__/
 .coverage
 htmlcov
 .vscode/
+.mypy_cache
 
 # Environments
 venv/

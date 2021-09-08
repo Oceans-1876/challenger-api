@@ -34,7 +34,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db : Session
             The database session.
         obj_in : UserCreate
-            Predefined User creation schema object containing data to be added to the database.
+            Predefined User creation schema object containing data
+            to be added to the database.
 
         Returns
         -------

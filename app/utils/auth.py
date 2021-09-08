@@ -9,7 +9,8 @@ settings = get_settings()
 
 
 def generate_password_reset_token(email: str) -> str:
-    """generate_password_reset_token Generates the access token to reset/recover the password.
+    """generate_password_reset_token Generates the access token
+        to reset/recover the password.
 
     Parameters
     ----------

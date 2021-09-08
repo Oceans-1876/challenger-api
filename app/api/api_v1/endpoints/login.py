@@ -22,14 +22,16 @@ router = APIRouter()
 def login_access_token(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    """login_access_token: OAuth2 compatible token login, get an access token for future requests
+    """login_access_token: OAuth2 compatible token login,
+        get an access token for future requests
 
     Parameters
     ----------
     db : Session
          The database session, by default Depends(deps.get_db)
     form_data : OAuth2PasswordRequestForm, optional
-        Object to hold the data from a form coming from the user, by default Depends()
+        Object to hold the data from a form coming from the user,
+        by default Depends()
 
     Returns
     -------
@@ -39,7 +41,8 @@ def login_access_token(
     Raises
     ------
     HTTPException
-        Raised when the user has entered an incorrect email/password or when an inactive User tries to authenticate.
+        Raised when the user has entered an incorrect email/password
+        or when an inactive User tries to authenticate.
     """
     user = crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
@@ -64,7 +67,8 @@ def test_token(current_user: models.User = Depends(deps.get_current_user)) -> An
     Parameters
     ----------
     current_user : models.User, optional
-        Instance of the User who is currently logged in, by default Depends(deps.get_current_user)
+        Instance of the User who is currently logged in,
+        by default Depends(deps.get_current_user)
 
     Returns
     -------
@@ -134,7 +138,8 @@ def reset_password(
     Raises
     ------
     HTTPException
-        Raised when an invalid token is provided, the user is not found in the system or the user is inactive.
+        Raised when an invalid token is provided, the user is not found
+        in the system or the user is inactive.
     """
     email = verify_password_reset_token(token)
     if not email:

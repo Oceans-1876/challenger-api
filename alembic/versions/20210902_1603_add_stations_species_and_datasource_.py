@@ -71,9 +71,9 @@ def upgrade():
         ),
         sa.Column("matched_canonical_full_name", sa.String(length=300), nullable=True),
         sa.Column("common_name", sa.String(length=300), nullable=True),
-        sa.Column("classification_path", sa.String(length=300), nullable=False),
-        sa.Column("classification_ranks", sa.String(length=300), nullable=False),
-        sa.Column("classification_ids", sa.String(length=300), nullable=False),
+        sa.Column("classification_path", sa.String(length=800)),
+        sa.Column("classification_ranks", sa.String(length=800)),
+        sa.Column("classification_ids", sa.String(length=800)),
         sa.Column("data_source_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["data_source_id"],

@@ -18,9 +18,9 @@ class Species(Base):
     matched_canonical_simple_name: Optional[str] = Column(String(length=300))
     matched_canonical_full_name: Optional[str] = Column(String(length=300))
     common_name: Optional[str] = Column(String(length=300))
-    classification_path: str = Column(String(length=300), nullable=False)
-    classification_ranks: str = Column(String(length=300), nullable=False)
-    classification_ids: str = Column(String(length=300), nullable=False)
+    classification_path: Optional[str] = Column(String(length=800))
+    classification_ranks: Optional[str] = Column(String(length=800))
+    classification_ids: Optional[str] = Column(String(length=800))
     data_source_id: int = Column(Integer, ForeignKey("data_sources.id"), nullable=False)
 
     data_source: "DataSource" = relationship("DataSource", back_populates="species")

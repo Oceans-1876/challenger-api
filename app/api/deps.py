@@ -47,9 +47,8 @@ def get_current_user(
     Raises
     ------
     HTTPException
-        Raised when Invalid credentials are provided and the jwt can't decode the token.
-    HTTPException
-        Rasied when the extracted information of the user from the token cannot fetch a valid user from the database.
+        Raised when Invalid credentials are provided and the jwt can't decode the token or
+        when the extracted information of the user from the token cannot fetch a valid user from the database.
     """
     try:
         payload = jwt.decode(

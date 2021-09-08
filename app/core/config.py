@@ -10,15 +10,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 
 class Settings(BaseSettings):
-    """Settings is class to hold all the configuration information about the server
-
-    Parameters
-    ----------
-    BaseSettings : [type]
-        The model initialiser will attempt to determine the values of any
-        fields not passed as keyword arguments by reading from the environment.
-
-    """
+    """Settings is class to hold all the configuration information about the server"""
 
     PROJECT_NAME: str
     SERVER_NAME: str

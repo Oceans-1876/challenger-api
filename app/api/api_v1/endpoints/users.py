@@ -178,9 +178,7 @@ def create_user_open(
     Raises
     ------
     HTTPException
-        [description]
-    HTTPException
-        [description]
+        Raised if open user registeration is not allowed on the server or if the username is already in the system.
     """
     if not settings.USERS_OPEN_REGISTRATION:
         raise HTTPException(

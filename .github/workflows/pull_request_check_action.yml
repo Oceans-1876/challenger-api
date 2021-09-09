@@ -2,7 +2,7 @@ name: Perform unit test on the new pull requests.
 
 on:
   pull_request:
-    types: [opened,edited]
+    types: [opened, edited]
 
 jobs:
   project-setup-and-run-tests:
@@ -25,7 +25,7 @@ jobs:
           --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host
-          - 5432: 5432
+          - 5432:5432
 
     steps:
       - name: Check out repo
@@ -56,16 +56,16 @@ jobs:
           poetry run ./scripts/run_migrations.sh
 
       - name: Run Unit Testing
-        run: |
-          poetry run pytest
-      env:
-          # The hostname used to communicate with the PostgreSQL service container
-          POSTGRES_HOST: localhost
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432
-          POSTGRES_SERVER: localhost
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: oceans1876
-          POSTGRES_TEST_DB: tests_oceans1876
+        run: poetry run pytest
+
+    env:
+      # The hostname used to communicate with the PostgreSQL service container
+      POSTGRES_HOST: localhost
+      # The default PostgreSQL port
+      POSTGRES_PORT: 5432
+      POSTGRES_SERVER: localhost
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: oceans1876
+      POSTGRES_TEST_DB: tests_oceans1876
 

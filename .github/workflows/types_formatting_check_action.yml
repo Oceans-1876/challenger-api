@@ -7,6 +7,7 @@ on:
 jobs:
   perfrom-type-and-formatting-check:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repo
         uses: actions/checkout@v2

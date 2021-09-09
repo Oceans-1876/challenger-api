@@ -45,19 +45,19 @@ jobs:
           POETRY_VIRTUALENVS_CREATE: false
 
       - name: Setup the database before running migrations
-          run: |
-            sudo -u postgres psql
-            CREATE DATABASE oceans1876;
-            \connect oceans1876
-            CREATE EXTENSION postgis;
+        run: |
+          sudo -u postgres psql
+          CREATE DATABASE oceans1876;
+          \connect oceans1876
+          CREATE EXTENSION postgis;
 
       - name: Run Migrations
-          run: |
-            poetry run ./scripts/run_migrations.sh
+        run: |
+          poetry run ./scripts/run_migrations.sh
 
       - name: Run Unit Testing
-          run: |
-            poetry run pytest
+        run: |
+          poetry run pytest
       env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost

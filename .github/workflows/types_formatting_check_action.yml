@@ -1,6 +1,7 @@
 name: Perfrom Type and Formatting checks on a new/edited pull requests.
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, edited]
 

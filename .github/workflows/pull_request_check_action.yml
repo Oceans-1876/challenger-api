@@ -1,6 +1,7 @@
 name: Perform unit test on the new pull requests.
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, edited]
 

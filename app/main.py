@@ -4,7 +4,9 @@ from starlette.middleware.cors import CORSMiddleware
 from app.api.api_v1.api import api_router
 from app.core.config import get_settings
 
-settings = get_settings()
+settings = (
+    get_settings()
+)  # Get the Settings object with all the environment information
 
 app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"

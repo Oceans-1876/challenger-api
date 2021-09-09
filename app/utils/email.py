@@ -16,6 +16,19 @@ def send_email(
     html_template: str = "",
     environment: Dict[str, Any] = {},
 ) -> None:
+    """send_email to the user.
+
+    Parameters
+    ----------
+    email_to : str
+        Email ID of the recipient.
+    subject_template : str, optional
+        Subject of the email to be sent, by default ""
+    html_template : str, optional
+        Template of the email to be sent, by default ""
+    environment : Dict[str, Any], optional
+        Dictionary to receive additional information if required, by default {}
+    """
     assert settings.EMAILS_ENABLED, "no provided configuration for email variables"
     message = emails.Message(
         subject=JinjaTemplate(subject_template),
@@ -34,6 +47,13 @@ def send_email(
 
 
 def send_test_email(email_to: str) -> None:
+    """send_test_email Sends sample emails.
+
+    Parameters
+    ----------
+    email_to : str
+        Email ID of the recipient.
+    """
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Test email"
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "test_email.html") as f:
@@ -47,6 +67,17 @@ def send_test_email(email_to: str) -> None:
 
 
 def send_reset_password_email(email_to: str, email: str, token: str) -> None:
+    """send_reset_password_email
+
+    Parameters
+    ----------
+    email_to : str
+        Email ID of the recipient.
+    email : str
+        Email ID of the recipient.
+    token : str
+        Access token of the User.
+    """
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - Password recovery for user {email}"
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "reset_password.html") as f:
@@ -68,6 +99,17 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
 
 
 def send_new_account_email(email_to: str, username: str, password: str) -> None:
+    """send_new_account_email Send a welcome email to the User.
+
+    Parameters
+    ----------
+    email_to : str
+        Email ID of the recipient.
+    username : str
+        Email ID of the recipient.
+    password : str
+        Password of the recipient.
+    """
     project_name = settings.PROJECT_NAME
     subject = f"{project_name} - New account for user {username}"
     with open(Path(settings.EMAIL_TEMPLATES_DIR) / "new_account.html") as f:

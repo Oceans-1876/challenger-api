@@ -18,6 +18,7 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: oceans1876
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -47,8 +48,7 @@ jobs:
 
       - name: Setup the database before running migrations
         run: |
-          sudo -u postgres psql
-          CREATE DATABASE oceans1876;
+          psql postgres -U oceans1876
           \connect oceans1876
           CREATE EXTENSION postgis;
 
@@ -65,7 +65,7 @@ jobs:
       # The default PostgreSQL port
       POSTGRES_PORT: 5432
       POSTGRES_SERVER: localhost
-      POSTGRES_USER: postgres
+      POSTGRES_USER: oceans1876
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: oceans1876
       POSTGRES_TEST_DB: tests_oceans1876

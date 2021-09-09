@@ -6,23 +6,24 @@ on:
 
 jobs:
   perfrom-type-and-formatting-check:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Check out repo
-      uses: actions/checkout@v2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
 
-    - name: Setup Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.9"
+      - name: Setup Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
 
-    - name: Install python requirements
-      run: |
-        pip install -U pip
-        pip install poetry
-        poetry install
-      env:
-        POETRY_VIRTUALENVS_CREATE: false
-    - name: Run type and format checking scripts
-      run: |
-        poetry run ./scripts/lint.sh
+      - name: Install python requirements
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+
+      - name: Run type and format checking scripts
+        run: |
+          poetry run ./scripts/lint.sh

@@ -29,29 +29,30 @@ def get_db() -> Generator:
 def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> models.User:
-    """get_current_user fetches the currently logged in user by using the
-        generated token for the particular user.
+    """get_current_user fetches the currently logged in user
+        by using the generated token for the particular user.
 
     Parameters
     ----------
     db : Session
         The database session, by default Depends(get_db)
     token : str
-        The token is extracted form the users system local storage by the
-        OAuth2PasswordBearer function, by default Depends(reusable_oauth2)
+        The token is extracted form the users system local storage
+        by the OAuth2PasswordBearer function,
+        by default Depends(reusable_oauth2)
 
     Returns
     -------
     models.User
-        If the User is found in the database then it is returned, otherwise,
-        an exception is raised.
+        If the User is found in the database then it is returned,
+        otherwise, en exception is raised.
 
     Raises
     ------
     HTTPException
-        Raised when Invalid credentials are provided and the jwt can't decode
-        the token or when the extracted information of the user from the token
-        cannot fetch a valid user from the database.
+        Raised when Invalid credentials are provided and the
+        jwt can't decode the token or when the extracted information
+        of the user from the token cannot fetch a valid user from the database.
     """
     try:
         payload = jwt.decode(
@@ -77,7 +78,8 @@ def get_current_active_user(
     Parameters
     ----------
     current_user : models.User
-        Current User from the database, by default Depends(get_current_user)
+        Current User from the database,
+        by default Depends(get_current_user)
 
     Returns
     -------
@@ -102,7 +104,8 @@ def get_current_active_superuser(
     Parameters
     ----------
     current_user : models.User
-        Current User from the database, by default Depends(get_current_user)
+        Current User from the database,
+        by default Depends(get_current_user)
 
     Returns
     -------

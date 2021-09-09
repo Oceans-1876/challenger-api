@@ -9,8 +9,8 @@ settings = get_settings()
 
 
 def generate_password_reset_token(email: str) -> str:
-    """generate_password_reset_token Generates the access token
-        to reset/recover the password.
+    """generate_password_reset_token Generates the access
+        token to reset/recover the password.
 
     Parameters
     ----------
@@ -35,7 +35,8 @@ def generate_password_reset_token(email: str) -> str:
 
 
 def verify_password_reset_token(token: str) -> Optional[str]:
-    """verify_password_reset_token Check whether the token is authentic or not.
+    """verify_password_reset_token Check whether the
+        token is authentic or not.
 
     Parameters
     ----------

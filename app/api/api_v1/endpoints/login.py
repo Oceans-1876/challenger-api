@@ -138,8 +138,8 @@ def reset_password(
     Raises
     ------
     HTTPException
-        Raised when an invalid token is provided, the user is not found
-        in the system or the user is inactive.
+        Raised when an invalid token is provided, the user
+        is not found in the system or the user is inactive.
     """
     email = verify_password_reset_token(token)
     if not email:

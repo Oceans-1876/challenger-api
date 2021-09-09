@@ -9,6 +9,7 @@ htmlcov
 .mypy_cache
 .pytest_cache
 
+
 # Environments
 venv/
 .env

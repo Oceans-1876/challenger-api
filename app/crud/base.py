@@ -36,7 +36,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         Returns
         -------
-        Optional
+        Optional[ModelType]
             An instance of the SQLAlchemy for the fetched object, if it exists.
         """
         return db.query(self.model).filter(self.model.id == id).first()
@@ -57,7 +57,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         Returns
         -------
-        List
+        List[ModelType]
             A list of SQLAlchemy model instances from the query.
         """
         return db.query(self.model).offset(skip).limit(limit).all()
@@ -134,7 +134,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
         Returns
         -------
-        Optional
+        Optional[ModelType]
             The deleted object, if it existed in the database.
         """
         obj = db.query(self.model).get(id)

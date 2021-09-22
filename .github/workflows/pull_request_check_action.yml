@@ -48,7 +48,6 @@ jobs:
 
       - name: Setup the database before running migrations
         run: |
-          sudo apt-get update
           sudo apt-get install postgresql-client
           echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
 

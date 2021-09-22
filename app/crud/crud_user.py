@@ -27,7 +27,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         """
         return db.query(User).filter(User.email == email).first()
 
-    def create(self, db: Session, *, obj_in: UserCreate) -> User:
+    def create(self, db: Session, *, obj_in: UserCreate) -> User:  # type: ignore[override] # noqa E501
         """create function creates a user from incoming object.
 
         Parameters

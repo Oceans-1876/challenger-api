@@ -14,7 +14,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: mdillon/postgis
+        image: postgis/postgis:13-master
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
-        
+
       - name: Setup Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -48,21 +48,17 @@ jobs:
 
       - name: Setup the database before running migrations
         run: |
-          sudo apt-get update
-          sudo apt-get install postgresql-client
-          echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
+          apt-get update
+          apt-get install -y --no-install-recommends postgresql-client
+          createdb $POSTGRES_TEST_DB
+          echo "CREATE EXTENSION postgis" | psql -d "postgresql://$POSTGRES_USER$POSTGRES_PASSWORD:@localhost:5432/$POSTGRES_TEST_DB"
 
       - name: Run Unit Testing
         run: poetry run ./scripts/run_tests.sh
 
     env:
-      # The hostname used to communicate with the PostgreSQL service container
-      POSTGRES_HOST: localhost
       # The default PostgreSQL port
-      POSTGRES_PORT: 5432
       POSTGRES_SERVER: localhost
       POSTGRES_USER: oceans1876
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: oceans1876
       POSTGRES_TEST_DB: tests_oceans1876
-

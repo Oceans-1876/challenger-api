@@ -10,6 +10,8 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 
 class Settings(BaseSettings):
+    """Settings is class to hold all the configuration information about the server"""
+
     PROJECT_NAME: str
     SERVER_NAME: str
     API_V1_STR: str = "/api/v1"

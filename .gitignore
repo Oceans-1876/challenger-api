@@ -5,9 +5,14 @@ __pycache__/
 .cache
 .coverage
 htmlcov
+.vscode/
+.mypy_cache
+.pytest_cache
+
 
 # Environments
 venv/
+.env
 
 # Data
 resources/

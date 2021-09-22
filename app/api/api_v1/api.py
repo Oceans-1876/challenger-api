@@ -9,6 +9,7 @@ from app.api.api_v1.endpoints import (
     utils,
 )
 
+# Add all the API endpoints from the endpoints folder
 api_router = APIRouter()
 api_router.include_router(data_sources.router, prefix="/data_source", tags=["species"])
 api_router.include_router(login.router, tags=["login"])

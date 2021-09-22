@@ -62,7 +62,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         return db.query(self.model).offset(skip).limit(limit).all()
 
-    def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+    def create(
+        self, db: Session, *, obj_in: Union[CreateSchemaType, Dict[str, Any]]
+    ) -> ModelType:
         """Create a new record in the database.
 
         Parameters

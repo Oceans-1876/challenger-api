@@ -1,15 +1,17 @@
 #! /usr/bin/env bash
 set -e
 
-# Read POSTGRES_TEST_DB from .env file
-export POSTGRES_TEST_DB=tests_fastapi
-export $(cat .env | grep POSTGRES_TEST_DB) 1>/dev/null
-
-dropdb --if-exists $POSTGRES_TEST_DB
-createdb $POSTGRES_TEST_DB
-
 export PYTHON_TEST=true
 
-bash scripts/run_migrations.sh
+# Read POSTGRES_TEST_DB from .env file
+export $(cat .env | grep POSTGRES_TEST_DB) 1>/dev/null
 
-pytest --cov=app --cov-report=term-missing --cov-report=html app/tests "${@}"
+dropdb --if-exists "$POSTGRES_TEST_DB"
+createdb "$POSTGRES_TEST_DB"
+echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
+
+bash scripts/migrations_forward.sh
+
+bash scripts/import_data.sh
+
+pytest app/tests "${@}"

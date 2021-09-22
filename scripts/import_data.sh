@@ -2,8 +2,5 @@
 
 export PYTHONPATH=$PWD
 
-# Run migrations
-alembic upgrade head
-
 # Create initial data in DB
-python $PWD/app/db/init_data.py
+python app/db/init_data.py

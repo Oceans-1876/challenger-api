@@ -18,7 +18,7 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: oceans1876
+          POSTGRES_USER: tests_oceans1876
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -46,11 +46,12 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
 
-      - name: Setup the database before running migrations
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends postgresql-client
-          echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
+      # - name: Setup the database before running migrations
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y --no-install-recommends postgresql-client
+      #     psql -h postgres -d tests_oceans1876 -U tests_oceans1876 -c
+      #     echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
 
       - name: Run Unit Testing
         run: poetry run ./scripts/run_tests.sh
@@ -58,6 +59,6 @@ jobs:
     env:
       # The default PostgreSQL port
       POSTGRES_SERVER: localhost
-      POSTGRES_USER: oceans1876
+      POSTGRES_USER: tests_oceans1876
       POSTGRES_PASSWORD: postgres
       POSTGRES_TEST_DB: tests_oceans1876

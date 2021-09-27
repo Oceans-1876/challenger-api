@@ -54,7 +54,7 @@ jobs:
       #     echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
 
       - name: Run Unit Testing
-        run: poetry run ./scripts/run_tests.sh
+        run: poetry run pytest
 
     env:
       # The default PostgreSQL port

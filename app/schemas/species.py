@@ -17,6 +17,11 @@ class SpeciesBase(BaseModel):
     data_source_id: int
 
 
+class SpeciesBaseIDOnly(BaseModel):
+    id: str
+    data_source_id: int
+
+
 class SpeciesCreate(SpeciesBase):
     pass
 

@@ -3,6 +3,7 @@ from .data_source import (
     DataSourceCreate,
     DataSourceInDB,
     DataSourceUpdate,
+    DataSourceIDOnly,
 )
 from .geojson import Point
 from .msg import Msg

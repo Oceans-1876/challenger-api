@@ -37,3 +37,12 @@ class SpeciesInDB(SpeciesBase):
 
 class Species(SpeciesInDB):
     pass
+
+
+class SpeciesIDOnlyInDB(SpeciesBaseIDOnly):
+    class Config:
+        orm_mode = True
+
+
+class SpeciesID(SpeciesIDOnlyInDB):
+    pass

@@ -9,7 +9,7 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.DataSource])
+@router.get("/", response_model=List[schemas.DataSourceIDOnly])
 def read_data_source(
     db: Session = Depends(deps.get_db),
     skip: int = 0,

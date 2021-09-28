@@ -60,3 +60,9 @@ jobs:
           PGPORT: ${{ env.POSTGRES_PORT }}
           PGUSER: ${{ env.POSTGRES_USER }}
           PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          # Environment variables required by FastAPI
+          SERVER_HOST: http://localhost
+          SENTRY_DSN: ""
+          POSTGRES_DB: oceans1876
+          FIRST_SUPERUSER: admin@example.com
+          FIRST_SUPERUSER_PASSWORD: secret_password

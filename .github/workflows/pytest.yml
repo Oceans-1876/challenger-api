@@ -39,17 +39,10 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v2
 
-      - name: Setup the database before running migrations
+      - name: Install PostgreSQL client
         run: |
           apt-get update
           apt-get install -y postgresql-client
-
-      - name: Setup the test database
-        run: |
-          createdb -h $POSTGRES_SERVER -p $POSTGRES_PORT -U $POSTGRES_USER $POSTGRES_TEST_DB
-          echo "CREATE EXTENSION postgis" | psql -h $POSTGRES_SERVER -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_TEST_DB
-        env:
-          PGPASSWORD: $POSTGRES_PASSWORD
 
       - name: Install python requirements
         run: |
@@ -61,3 +54,9 @@ jobs:
 
       - name: Run Unit Testing
         run: bash ./scripts/run_tests.sh
+        env:
+          # The following are needed for dropdb and createdb commands in run_tests.sh
+          PGHOST: $POSTGRES_SERVER
+          PGPORT: $POSTGRES_PORT
+          PGUSER: $POSTGRES_USER
+          PGPASSWORD: $POSTGRES_PASSWORD

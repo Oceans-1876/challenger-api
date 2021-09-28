@@ -1,0 +1,63 @@
+name: Run unit test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [ opened, edited ]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    # Run the job in this container
+    container: python:3.9-bullseye
+
+    env:
+      POSTGRES_SERVER: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_TEST_DB: tests_oceans1876
+
+    # Service containers to run with `pytest` job
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgis/postgis:13-master
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Setup the database before running migrations
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client netcat
+
+      - name: Setup the test database
+        run: |
+          createdb -h $POSTGRES_SERVER -p $POSTGRES_PORT -U $POSTGRES_USER $POSTGRES_TEST_DB
+          echo "CREATE EXTENSION postgis" | psql -h $POSTGRES_SERVER -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_TEST_DB
+        env:
+          PGPASSWORD: $POSTGRES_PASSWORD
+
+      - name: Install python requirements
+        run: |
+          pip install -U pip
+          pip install poetry
+          poetry install
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+
+      - name: Run Unit Testing
+        run: bash ./scripts/run_tests.sh

@@ -38,6 +38,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
+        with:
+          submodules: true
 
       - name: Install PostgreSQL client
         run: |

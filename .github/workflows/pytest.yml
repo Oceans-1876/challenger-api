@@ -41,8 +41,8 @@ jobs:
 
       - name: Setup the database before running migrations
         run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client netcat
+          apt-get update
+          apt-get install -y postgresql-client
 
       - name: Setup the test database
         run: |

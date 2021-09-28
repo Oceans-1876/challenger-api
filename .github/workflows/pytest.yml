@@ -27,7 +27,7 @@ jobs:
         image: postgis/postgis:13-master
         # Provide the password for postgres
         env:
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -56,7 +56,7 @@ jobs:
         run: bash ./scripts/run_tests.sh
         env:
           # The following are needed for dropdb and createdb commands in run_tests.sh
-          PGHOST: $POSTGRES_SERVER
-          PGPORT: $POSTGRES_PORT
-          PGUSER: $POSTGRES_USER
-          PGPASSWORD: $POSTGRES_PASSWORD
+          PGHOST: ${{ env.POSTGRES_SERVER }}
+          PGPORT: ${{ env.POSTGRES_PORT }}
+          PGUSER: ${{ env.POSTGRES_USER }}
+          PGPASSWORD: ${{ env.POSTGRES_PASSWORD }}

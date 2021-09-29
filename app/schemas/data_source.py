@@ -21,13 +21,6 @@ class DataSourceUpdate(DataSourceBase):
     pass
 
 
-class DataSourceInDB(DataSourceBase):
-    species: List[Species]
-
-    class Config:
-        orm_mode = True
-
-
 class DataSourceInDBIDOnly(DataSourceBase):
     species: List[SpeciesID]
 
@@ -36,8 +29,4 @@ class DataSourceInDBIDOnly(DataSourceBase):
 
 
 class DataSourceIDOnly(DataSourceInDBIDOnly):
-    pass
-
-
-class DataSource(DataSourceInDB):
     pass

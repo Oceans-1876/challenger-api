@@ -20,7 +20,7 @@ def read_data_source(
     return data_sources
 
 
-@router.get("/{data_source_id}", response_model=schemas.DataSource)
+@router.get("/{data_source_id}", response_model=schemas.DataSourceIDOnly)
 def read_data_source_by_id(
     data_source_id: int,
     db: Session = Depends(deps.get_db),

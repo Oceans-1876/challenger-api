@@ -1,6 +1,6 @@
 """Pydantic models for representing species extracted by `challenger-workflows`.
 """
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -19,7 +19,6 @@ class SpeciesBase(BaseModel):
 
 class SpeciesBaseIDOnly(BaseModel):
     id: str
-    data_source_id: int
 
 
 class SpeciesCreate(SpeciesBase):

@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from datetime import datetime
@@ -15,7 +16,7 @@ settings = get_settings()
 
 
 class Data:
-    def __init__(self, test_mode=False) -> None:
+    def __init__(self, test_mode=os.environ.get("PYTHON_TEST")) -> None:
         self.db = SessionLocal()
         self.data_sources: Dict[str, models.DataSource] = {}
         if not test_mode:

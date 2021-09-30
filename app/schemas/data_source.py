@@ -5,7 +5,7 @@ from typing import List
 
 from pydantic import BaseModel
 
-from app.schemas.species import Species, SpeciesID
+from app.schemas.species import SpeciesID
 
 
 class DataSourceBase(BaseModel):

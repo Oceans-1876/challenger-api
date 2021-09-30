@@ -15,13 +15,29 @@ settings = get_settings()
 
 
 class Data:
-    def __init__(self) -> None:
+    def __init__(self, test_mode=False) -> None:
         self.db = SessionLocal()
-        self.data_path = PROJECT_ROOT / "data" / "Oceans1876"
         self.data_sources: Dict[str, models.DataSource] = {}
-        with open(self.data_path / "species.json", "r") as f:
-            self.species = json.load(f)["species"]
-        with open(self.data_path / "stations.json", "r") as f:
+        if not test_mode:
+            self.data_path_species = (
+                PROJECT_ROOT / "data" / "Oceans1876" / "species.json"
+            )
+            self.data_path_stations = (
+                PROJECT_ROOT / "data" / "Oceans1876" / "stations.json"
+            )
+            with open(self.data_path_species, "r") as f:
+                self.species = json.load(f)["species"]
+        else:
+            self.data_path_species = (
+                PROJECT_ROOT / "data" / "Oceans1876_subset" / "test_species.json"
+            )
+            self.data_path_stations = (
+                PROJECT_ROOT / "data" / "Oceans1876_subset" / "test_stations.json"
+            )
+            with open(self.data_path_species, "r") as f:
+                self.species = json.load(f)
+
+        with open(self.data_path_stations, "r") as f:
             self.stations = json.load(f)
 
     def create_all(self) -> None:

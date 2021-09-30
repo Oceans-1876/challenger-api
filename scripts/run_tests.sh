@@ -12,6 +12,6 @@ echo "CREATE EXTENSION postgis" | psql -d "$POSTGRES_TEST_DB"
 
 bash scripts/migrations_forward.sh
 
-bash scripts/import_data.sh
+bash scripts/import_test_data.sh
 
 pytest app/tests "${@}"

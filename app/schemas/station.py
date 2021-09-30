@@ -8,7 +8,7 @@ from geoalchemy2 import WKBElement
 from pydantic import BaseModel, validator
 
 from app.schemas.geojson import Point
-from app.schemas.species import Species
+from app.schemas.species import SpeciesID
 
 
 class StationBase(BaseModel):
@@ -47,7 +47,8 @@ class StationUpdate(StationBase):
 
 
 class StationInDB(StationBase):
-    species: List[Species]
+    species: List[SpeciesID]
+    # species: SpeciesID
 
     class Config:
         orm_mode = True

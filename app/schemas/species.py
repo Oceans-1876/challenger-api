@@ -1,6 +1,6 @@
 """Pydantic models for representing species extracted by `challenger-workflows`.
 """
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 

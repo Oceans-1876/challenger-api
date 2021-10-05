@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 from datetime import datetime
@@ -13,15 +14,33 @@ logger = logging.getLogger("Data Import")
 
 settings = get_settings()
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--testing", type=bool, default=False)
+args = parser.parse_args()
+
 
 class Data:
-    def __init__(self) -> None:
+    def __init__(self, test_mode) -> None:
         self.db = SessionLocal()
-        self.data_path = PROJECT_ROOT / "data" / "Oceans1876"
         self.data_sources: Dict[str, models.DataSource] = {}
-        with open(self.data_path / "species.json", "r") as f:
+
+        self.species_path = (
+            PROJECT_ROOT
+            / "data"
+            / ("Oceans1876" if not test_mode else "Oceans1876_subset")
+            / "species.json"
+        )
+
+        self.stations_path = (
+            PROJECT_ROOT
+            / "data"
+            / ("Oceans1876" if not test_mode else "Oceans1876_subset")
+            / "stations.json"
+        )
+
+        with open(self.species_path, "r") as f:
             self.species = json.load(f)["species"]
-        with open(self.data_path / "stations.json", "r") as f:
+        with open(self.stations_path, "r") as f:
             self.stations = json.load(f)
 
     def create_all(self) -> None:
@@ -157,6 +176,6 @@ class Data:
 
 if __name__ == "__main__":
     logger.info("Creating initial data")
-    data = Data()
+    data = Data(test_mode=args.testing)
     data.create_all()
     logger.info("Initial data created")

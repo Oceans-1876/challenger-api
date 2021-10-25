@@ -1,6 +1,8 @@
 from typing import Dict
 from fastapi.testclient import TestClient
 from fastapi import APIRouter, Depends
+import pytest
+from typing import Any, List
 
 from sqlalchemy.orm import Session
 
@@ -22,9 +24,10 @@ def test_read_stations(client: TestClient, db: Session) -> None:
     stations = crud.species.get_multi(db)
     assert stations
 
+@pytest.mark.parametrize("/{station_id}")
 def test_read_station_by_id(client: TestClient, station_id: str, db: Session) -> None:
     # data = {"email": username, "password": password}
-    r = client.get(f"{settings.API_V1_STR}/{station_id}")
+    r = client.get(f"{settings.API_V1_STR}/stations/{station_id}")
     assert 200 <= r.status_code < 300
     # created_user = r.json()
     station = crud.species.get_multi(db)

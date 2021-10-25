@@ -4,8 +4,9 @@
 - Install the dependencies: `poetry install`.
 - Create a PostgreSQL database and install PostGIS extension on it.
 - Create `.env` file in project root (see `.env-example` for the available variables).
-- Create tables and run migrations by running, `poetry run ./scripts/migrations_create.sh`.
-- Run the migrations to create the database tables: `poetry run ./scripts/import_data.sh`.
+- To create tables run, `poetry run ./scripts/migrations_forward.sh`.
+- To update tables and add new models run, `poetry run ./scripts/migrations_create.sh`.
+- Import data into the tables: `poetry run ./scripts/import_data.sh`.
 - Run the dev server: `poetry run ./scripts/run_dev_server.sh`.
 - Run the dev email server: `poetry run ./scripts/run_dev_email_server.sh`.
 

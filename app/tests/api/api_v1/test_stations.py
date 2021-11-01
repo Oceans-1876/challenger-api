@@ -24,7 +24,8 @@ def test_read_stations(client: TestClient, db: Session) -> None:
     stations = crud.species.get_multi(db)
     assert stations
 
-@pytest.mark.parametrize("test_input,expected", ["Station I"] )
+
+@pytest.mark.parametrize("station_id", ["Station I"])
 def test_read_station_by_id(client: TestClient, station_id: str, db: Session) -> None:
     # data = {"email": username, "password": password}
     r = client.get(f"{settings.API_V1_STR}/stations/{station_id}")

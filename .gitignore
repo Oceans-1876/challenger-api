@@ -12,6 +12,7 @@ htmlcov
 
 # Environments
 venv/
+.venv/
 .env
 
 # Data

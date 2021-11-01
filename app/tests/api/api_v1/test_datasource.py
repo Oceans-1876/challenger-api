@@ -26,7 +26,7 @@ def test_read_datasource(client: TestClient, db: Session) -> None:
 # [1, 2, 3, 4] are the ID's of the datasources which should be tested in the database.
 @pytest.mark.parametrize("data_source_id", [1, 2, 3, 4])
 def test_read_datasource_by_id(
-    client: TestClient, data_source_id: str, db: Session
+    client: TestClient, data_source_id: int, db: Session
 ) -> None:
     r = client.get(f"{settings.API_V1_STR}/data_source/{data_source_id}")
     assert 200 <= r.status_code < 300

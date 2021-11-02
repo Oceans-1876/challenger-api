@@ -5,12 +5,21 @@ from typing import List
 
 from pydantic import BaseModel
 
-from app.schemas.species import SpeciesID
+from app.schemas.species import SpeciesSummary
 
 
 class DataSourceBase(BaseModel):
     id: int
     title: str
+
+
+class DataSourceSummaryInDB(DataSourceBase):
+    class Config:
+        orm_mode = True
+
+
+class DataSourceSummary(DataSourceSummaryInDB):
+    pass
 
 
 class DataSourceCreate(DataSourceBase):
@@ -21,12 +30,12 @@ class DataSourceUpdate(DataSourceBase):
     pass
 
 
-class DataSourceInDBIDOnly(DataSourceBase):
-    species: List[SpeciesID]
+class DataSourceDetailsInDB(DataSourceBase):
+    species: List[SpeciesSummary]
 
     class Config:
         orm_mode = True
 
 
-class DataSourceIDOnly(DataSourceInDBIDOnly):
+class DataSourceDetails(DataSourceDetailsInDB):
     pass

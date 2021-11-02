@@ -17,7 +17,6 @@ def send_email(
     environment: Dict[str, Any] = {},
 ) -> None:
     """send_email to the user.
-
     Parameters
     ----------
     email_to : str
@@ -48,7 +47,6 @@ def send_email(
 
 def send_test_email(email_to: str) -> None:
     """send_test_email Sends sample emails.
-
     Parameters
     ----------
     email_to : str
@@ -68,7 +66,6 @@ def send_test_email(email_to: str) -> None:
 
 def send_reset_password_email(email_to: str, email: str, token: str) -> None:
     """send_reset_password_email
-
     Parameters
     ----------
     email_to : str
@@ -100,7 +97,6 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
 
 def send_new_account_email(email_to: str, username: str, password: str) -> None:
     """send_new_account_email Send a welcome email to the User.
-
     Parameters
     ----------
     email_to : str

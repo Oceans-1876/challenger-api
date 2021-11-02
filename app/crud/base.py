@@ -2,7 +2,8 @@ from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
+from sqlalchemy.orm import Query, Session
 
 from app.db.base_class import Base
 
@@ -16,7 +17,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def __init__(self, model: Type[ModelType]):
         """
-
         Parameters
         ----------
         model : BaseModel
@@ -26,14 +26,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def get(self, db: Session, id: Any) -> Optional[ModelType]:
         """Get a database record by id.
-
         Parameters
         ----------
         db : Session
             The database session.
         id : Any
             The object id to fetch from the database.
-
         Returns
         -------
         Optional[ModelType]
@@ -41,11 +39,42 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         return db.query(self.model).filter(self.model.id == id).first()
 
+    def order_by(self, query: Query, *, order_by: Optional[List[str]] = None) -> Query:
+        """Order the query by the given list of columns.
+        Parameters
+        ----------
+        query : Query
+        order_by : Optional[List[str]]
+            List of column names to order by. If a column name is prefixed with '-',
+            order it in descending order.
+        Returns
+        -------
+        Query
+            The ordered query.
+        """
+        order_by_args = []
+        if order_by:
+            for column in order_by:
+                if column.startswith("-"):
+                    column_name = column[1:]
+                    order_func = desc
+                else:
+                    column_name = column
+                    order_func = asc
+
+                order_by_args.append(order_func(getattr(self.model, column_name)))
+
+        return query.order_by(*order_by_args)
+
     def get_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100
+        self,
+        db: Session,
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        order_by: Optional[List[str]] = None
     ) -> List[ModelType]:
         """Get multiple records from the database.
-
         Parameters
         ----------
         db : Session
@@ -54,19 +83,40 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             The offset to start fetching records from.
         limit: int
             The number of records to return.
-
+        order_by: Optional[List[str]]
+            List of column names to order by. If a column name is prefixed with '-',
+            order it in descending order.
         Returns
         -------
         List[ModelType]
             A list of SQLAlchemy model instances from the query.
         """
-        return db.query(self.model).offset(skip).limit(limit).all()
+        query = self.order_by(db.query(self.model), order_by=order_by)
+        return query.offset(skip).limit(limit).all()
+
+    def get_all(
+        self, db: Session, *, order_by: Optional[List[str]] = None
+    ) -> List[ModelType]:
+        """Get all records from the database.
+        Parameters
+        ----------
+        db : Session
+            The database session.
+        order_by: Optional[List[str]]
+            List of column names to order by. If a column name is prefixed with '-',
+            order it in descending order.
+        Returns
+        -------
+        List[ModelType]
+            A list of SQLAlchemy model instances from the query.
+        """
+        query = self.order_by(db.query(self.model), order_by=order_by)
+        return query.all()
 
     def create(
         self, db: Session, *, obj_in: Union[CreateSchemaType, Dict[str, Any]]
     ) -> ModelType:
         """Create a new record in the database.
-
         Parameters
         ----------
         db : Session
@@ -74,7 +124,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in : CreateSchemaType
             A Pydantic model that its attributes are used
             to create a new record in the attributes.
-
         Returns
         -------
         ModelType
@@ -95,7 +144,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in: Union[UpdateSchemaType, Dict[str, Any]]
     ) -> ModelType:
         """Update an existing record in the database.
-
         Parameters
         ----------
         db : Session
@@ -105,7 +153,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         obj_in : Union[UpdateSchemaType, Dict[str, Any]]
             Either a Pydantic model or a dictionary of
             new values for the database object to update from.
-
         Returns
         -------
         ModelType
@@ -126,14 +173,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def remove(self, db: Session, *, id: int) -> Optional[ModelType]:
         """Delete the database object for the given id.
-
         Parameters
         ----------
         db : Session
             The database session.
         id : Any
             The object id in the database to delete.
-
         Returns
         -------
         Optional[ModelType]

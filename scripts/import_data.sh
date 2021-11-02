@@ -3,7 +3,7 @@
 export PYTHONPATH=$PWD
 
 # Create initial data in DB
-if [ $PYTHON_TEST == true ]
+if [ "$PYTHON_TEST" == true ]
 then
    python app/db/init_data.py --testing True
 else

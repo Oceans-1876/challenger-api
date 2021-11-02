@@ -2,7 +2,6 @@
 set -e
 
 export PYTHON_TEST=true
-
 # Read POSTGRES_TEST_DB from .env file
 export $(cat .env | grep POSTGRES_TEST_DB) 1>/dev/null
 

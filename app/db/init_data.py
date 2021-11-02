@@ -81,8 +81,8 @@ class Data:
     def import_species(self) -> None:
         logger.info("Importing species and data sources")
 
-        for name, sp in self.species.items():
-            logger.info(f"Importing species: {name}")
+        for record_id, sp in self.species.items():
+            logger.info(f"Importing species: {sp['input']} ({record_id})")
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
@@ -95,9 +95,14 @@ class Data:
 
             obj_in = {
                 "id": sp["inputId"],
+                "record_id": sp_data["recordId"],
+                "current_record_id": sp_data["currentRecordId"],
                 "matched_name": sp_data["matchedName"],
-                "matched_canonical_simple_name": sp_data["matchedCanonicalSimple"],
-                "matched_canonical_full_name": sp_data["matchedCanonicalFull"],
+                "matched_canonical_simple_name": sp_data.get("matchedCanonicalSimple"),
+                "matched_canonical_full_name": sp_data.get("matchedCanonicalFull"),
+                "current_name": sp_data.get("currentName"),
+                "current_canonical_simple_name": sp_data.get("currentCanonicalSimple"),
+                "current_canonical_full_name": sp_data.get("currentCanonicalFull"),
                 "common_name": "",
                 "classification_path": sp_data.get("classificationPath"),
                 "classification_ranks": sp_data.get("classificationRanks"),
@@ -163,15 +168,13 @@ class Data:
 
             station_species = set()
             for sp in station_data["Species"]:
-                if sp["name"] not in station_species:
-                    station_species.add(sp["name"])
-                    species_data = self.species[sp["name"]].get("bestResult")
-                    if species_data:
-                        species = crud.species.get(
-                            self.db, self.species[sp["name"]]["inputId"]
-                        )
-                        if species:
-                            station.species.append(species)
+                if sp.get("recordId") and sp["recordId"] not in station_species:
+                    station_species.add(sp["recordId"])
+                    species = crud.species.get(
+                        self.db, self.species[sp["recordId"]]["inputId"]
+                    )
+                    if species:
+                        station.species.append(species)
 
 
 if __name__ == "__main__":

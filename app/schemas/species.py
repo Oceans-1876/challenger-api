@@ -7,9 +7,26 @@ from pydantic import BaseModel
 
 class SpeciesBase(BaseModel):
     id: str
+    record_id: str
+    matched_canonical_full_name: Optional[str] = None
+
+
+class SpeciesSummaryInDB(SpeciesBase):
+    class Config:
+        orm_mode = True
+
+
+class SpeciesSummary(SpeciesSummaryInDB):
+    pass
+
+
+class SpeciesDetailsBase(SpeciesBase):
+    current_record_id: str
     matched_name: str
     matched_canonical_simple_name: Optional[str] = None
-    matched_canonical_full_name: Optional[str] = None
+    current_name: Optional[str] = None
+    current_canonical_simple_name: Optional[str] = None
+    current_canonical_full_name: Optional[str] = None
     common_name: Optional[str] = None
     classification_path: Optional[str]
     classification_ranks: Optional[str]
@@ -17,31 +34,18 @@ class SpeciesBase(BaseModel):
     data_source_id: int
 
 
-class SpeciesBaseIDOnly(BaseModel):
-    id: str
-
-
-class SpeciesCreate(SpeciesBase):
+class SpeciesCreate(SpeciesDetailsBase):
     pass
 
 
-class SpeciesUpdate(SpeciesBase):
+class SpeciesUpdate(SpeciesDetailsBase):
     pass
 
 
-class SpeciesInDB(SpeciesBase):
+class SpeciesDetailsInDB(SpeciesDetailsBase):
     class Config:
         orm_mode = True
 
 
-class Species(SpeciesInDB):
-    pass
-
-
-class SpeciesIDOnlyInDB(SpeciesBaseIDOnly):
-    class Config:
-        orm_mode = True
-
-
-class SpeciesID(SpeciesIDOnlyInDB):
+class SpeciesDetails(SpeciesDetailsInDB):
     pass

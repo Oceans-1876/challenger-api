@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -9,16 +9,28 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.Species])
+@router.get("/", response_model=List[schemas.SpeciesSummary])
 def read_species(
-    db: Session = Depends(deps.get_db), skip: int = 0, limit: int = 100
+    db: Session = Depends(deps.get_db),
+    skip: int = 0,
+    limit: int = 100,
+    order_by: Optional[List[str]] = Query(None),
 ) -> Any:
     """Retrieve species."""
-    species = crud.species.get_multi(db, skip=skip, limit=limit)
+    species = crud.species.get_multi(db, skip=skip, limit=limit, order_by=order_by)
     return species
 
 
-@router.get("/{species_id}", response_model=schemas.Species)
+@router.get("/all/", response_model=List[schemas.SpeciesSummary])
+def read_all_species(
+    db: Session = Depends(deps.get_db), order_by: Optional[List[str]] = Query(None)
+) -> Any:
+    """Retrieve all species."""
+    species = crud.species.get_all(db, order_by=order_by)
+    return species
+
+
+@router.get("/{species_id}", response_model=schemas.SpeciesDetails)
 def read_species_by_id(
     species_id: str,
     db: Session = Depends(deps.get_db),

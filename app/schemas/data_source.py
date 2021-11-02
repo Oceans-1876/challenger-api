@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from app.schemas.species import SpeciesID
+from app.schemas.species import SpeciesSummary
 
 
 class DataSourceBase(BaseModel):
@@ -42,8 +42,8 @@ class DataSourceUpdate(DataSourceDetailsBase):
     pass
 
 
-class DataSourceDetailsInDB(DataSourceDetailsBase):
-    species: List[SpeciesID]
+class DataSourceDetailsInDB(DataSourceBase):
+    species: List[SpeciesSummary]
 
     class Config:
         orm_mode = True

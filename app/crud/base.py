@@ -67,7 +67,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                     column_name = column
                     order_func = asc
 
-                order_by_args.append(order_func(getattr(self.model, column_name)))
+                if hasattr(self.model, column_name):
+                    order_by_args.append(order_func(getattr(self.model, column_name)))
 
         return query.order_by(*order_by_args)
 

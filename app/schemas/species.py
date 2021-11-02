@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 class SpeciesBase(BaseModel):
     id: str
+    record_id: str
     matched_canonical_full_name: Optional[str] = None
 
 
@@ -20,8 +21,12 @@ class SpeciesSummary(SpeciesSummaryInDB):
 
 
 class SpeciesDetailsBase(SpeciesBase):
+    current_record_id: str
     matched_name: str
     matched_canonical_simple_name: Optional[str] = None
+    current_name: Optional[str] = None
+    current_canonical_simple_name: Optional[str] = None
+    current_canonical_full_name: Optional[str] = None
     common_name: Optional[str] = None
     classification_path: Optional[str]
     classification_ranks: Optional[str]

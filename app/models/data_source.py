@@ -1,7 +1,7 @@
 from datetime import date  # noqa
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Column, Integer, String, Date, Boolean
+from sqlalchemy import Column, Integer, String, Date, Boolean, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import null
 
@@ -19,7 +19,7 @@ class DataSource(Base):
     id: int = Column(Integer, primary_key=True, index=True)
     title: str = Column(String(150), nullable=False, index=True)
     title_short: str = Column(String(150), nullable=False)
-    description: Optional[str] = Column(String(length=900))
+    description: Optional[str] = Column(Text)
     curation: str = Column(String(90), nullable=False)
     record_count: Optional[int] = Column(Integer)
     updated_at: date = Column(Date, nullable=False)  # noqa: F811

@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, List, Optional
 
 from sqlalchemy import Column, Integer, String, Date, Boolean, Text
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.expression import null
 
 from app.db.base_class import Base
 

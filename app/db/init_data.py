@@ -124,7 +124,7 @@ class Data:
         # First remove all stations species relations
         models.stations_species_table.delete()
 
-        for station_data in self.stations:
+        for idx, station_data in enumerate(self.stations, start=1):
             logger.info(f"Importing Station {station_data['Station']}")
 
             longitude = station_data["Decimal Longitude"]
@@ -133,6 +133,7 @@ class Data:
 
             obj_in = {
                 "name": station_data["Station"],
+                "order": idx,
                 "sediment_sample": station_data.get("Sediment sample"),
                 "coordinates": coordinates,
                 "location": station_data["Location"],
@@ -143,9 +144,7 @@ class Data:
                 "fao_area": station_data["FAOarea"],
                 "gear": station_data.get("Gear"),
                 "depth_fathoms": station_data.get("Depth (fathoms)"),
-                "bottom_water_temp_c": station_data.get(
-                    "Bottom water temperature (C) "
-                ),
+                "bottom_water_temp_c": station_data.get("Bottom water temperature (C)"),
                 "bottom_water_depth_fathoms": station_data.get(
                     "Bottom water depth D (fathoms)"
                 ),

@@ -33,6 +33,7 @@ class Station(Base):
     __tablename__ = "stations"
 
     name: str = Column(String(length=20), primary_key=True, index=True)
+    order: int = Column(Integer, default=1)
     sediment_sample: Optional[str] = Column(String(length=50))
     coordinates: WKBElement = Column(
         Geometry("POINT", srid=4326, spatial_index=True),

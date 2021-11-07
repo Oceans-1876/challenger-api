@@ -32,3 +32,22 @@ def test_read_datasource_by_id(
     assert 200 <= r.status_code < 300
     response_ = r.json()
     assert response_["id"] == data_source_id
+
+
+@pytest.mark.parametrize("data_source_id", [2, -2, 4, 6])
+def test_read_datasource_by_id(
+    client: TestClient, data_source_id: int, db: Session
+) -> None:
+    r = client.get(f"{settings.API_V1_STR}/data_source/{data_source_id}")
+    assert 200 <= r.status_code < 300
+    response_ = r.json()
+    assert response_["id"] == data_source_id
+
+@pytest.mark.parametrize("data_source_id", [0, 0, 0, 0])
+def test_read_datasource_by_id(
+    client: TestClient, data_source_id: int, db: Session
+) -> None:
+    r = client.get(f"{settings.API_V1_STR}/data_source/{data_source_id}")
+    assert 200 <= r.status_code < 300
+    response_ = r.json()
+    assert response_["id"] == data_source_id

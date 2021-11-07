@@ -37,3 +37,34 @@ def test_read_species_by_id(client: TestClient, species_id: str, db: Session) ->
     assert 200 <= r.status_code < 300
     sp = r.json(db)
     assert sp["id"] == species_id
+
+
+@pytest.mark.parametrize(
+    "species_id",
+    [
+        "48cb3a10176b58df86699b9632be19e6",
+        "a7f21fa6d68f51ad96dc7831891e3c4b",
+        "684e3d0c2e4f53d3a4a153d24196cd4e",
+    ],
+)
+def test_read_species_by_id(client: TestClient, species_id: str, db: Session) -> None:
+    # data = {"email": username, "password": password}
+    r = client.get(f"{settings.API_V1_STR}/species/{species_id}")
+    assert 200 <= r.status_code < 300
+    sp = r.json(db)
+    assert sp["id"] == species_id
+
+@pytest.mark.parametrize(
+    "species_id",
+    [
+        "48cb3a1",
+        "a7f21fa",
+        "684e3",
+    ],
+)
+def test_read_species_by_id(client: TestClient, species_id: str, db: Session) -> None:
+    # data = {"email": username, "password": password}
+    r = client.get(f"{settings.API_V1_STR}/species/{species_id}")
+    assert 200 <= r.status_code < 300
+    sp = r.json(db)
+    assert sp["id"] == species_id

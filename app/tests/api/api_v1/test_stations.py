@@ -33,3 +33,21 @@ def test_read_station_by_id(client: TestClient, station_id: str, db: Session) ->
     # created_user = r.json()
     station = crud.species.get_multi(db)
     assert station
+
+@pytest.mark.parametrize("station_id", ["Station a"])
+def test_read_station_by_id(client: TestClient, station_id: str, db: Session) -> None:
+    # data = {"email": username, "password": password}
+    r = client.get(f"{settings.API_V1_STR}/stations/{station_id}")
+    assert 200 <= r.status_code < 300
+    # created_user = r.json()
+    station = crud.species.get_multi(db)
+    assert station
+
+@pytest.mark.parametrize("station_id", ["Station 141"])
+def test_read_station_by_id(client: TestClient, station_id: str, db: Session) -> None:
+    # data = {"email": username, "password": password}
+    r = client.get(f"{settings.API_V1_STR}/stations/{station_id}")
+    assert 200 <= r.status_code < 300
+    # created_user = r.json()
+    station = crud.species.get_multi(db)
+    assert station

@@ -50,7 +50,7 @@ jobs:
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha }}
         with:
-          name: ka7eh/gh-actions-sandbox/python-simple-server
+          name: Oceans-1876/challenger-api
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io

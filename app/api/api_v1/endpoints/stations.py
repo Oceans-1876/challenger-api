@@ -31,6 +31,24 @@ def read_all_stations(
     return stations
 
 
+@router.get("/search/", response_model=List[schemas.StationSummary])
+def read_stations_by_search(
+    search_term: str,
+    search_column: str,
+    db: Session = Depends(deps.get_db),
+    limit: int = 0,
+    order_by: Optional[List[str]] = Query(None),
+) -> Any:
+    stations = crud.station.search(
+        db,
+        search_column=search_column,
+        search_term=search_term,
+        order_by=order_by,
+        limit=limit,
+    )
+    return stations
+
+
 @router.get("/{station_id}", response_model=schemas.StationDetails)
 def read_station_by_id(
     station_id: str,

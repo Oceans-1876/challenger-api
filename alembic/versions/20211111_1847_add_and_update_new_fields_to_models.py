@@ -1,18 +1,18 @@
-"""Add Stations, Species, and DataSource models
+"""Add and Update new fields to models
 
-Revision ID: 47e9177640b3
-Revises: 73a4f6b274b7
-Create Date: 2021-09-02 16:03:25.453792+00:00
+Revision ID: 2567fffa963f
+Revises: 
+Create Date: 2021-11-11 18:47:47.034246+00:00
 
 """
-import sqlalchemy as sa
-
 from alembic import op
-from app.utils.db import Geometry
+import sqlalchemy as sa
+import app
+
 
 # revision identifiers, used by Alembic.
-revision = "47e9177640b3"
-down_revision = "73a4f6b274b7"
+revision = "2567fffa963f"
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -35,7 +35,7 @@ def upgrade():
         sa.Column("sediment_sample", sa.String(length=50), nullable=True),
         sa.Column(
             "coordinates",
-            Geometry(
+            app.utils.db.Geometry(
                 geometry_type="POINT",
                 srid=4326,
                 from_text="ST_GeomFromEWKT",
@@ -61,6 +61,19 @@ def upgrade():
         sa.PrimaryKeyConstraint("name"),
     )
     op.create_index(op.f("ix_stations_name"), "stations", ["name"], unique=False)
+    op.create_table(
+        "users",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("full_name", sa.String(), nullable=True),
+        sa.Column("email", sa.String(), nullable=False),
+        sa.Column("hashed_password", sa.String(), nullable=False),
+        sa.Column("is_active", sa.Boolean(), nullable=True),
+        sa.Column("is_superuser", sa.Boolean(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    op.create_index(op.f("ix_users_email"), "users", ["email"], unique=True)
+    op.create_index(op.f("ix_users_full_name"), "users", ["full_name"], unique=False)
+    op.create_index(op.f("ix_users_id"), "users", ["id"], unique=False)
     op.create_table(
         "species",
         sa.Column("id", sa.String(length=300), nullable=False),
@@ -103,6 +116,10 @@ def downgrade():
     op.drop_table("stations_species")
     op.drop_index(op.f("ix_species_id"), table_name="species")
     op.drop_table("species")
+    op.drop_index(op.f("ix_users_id"), table_name="users")
+    op.drop_index(op.f("ix_users_full_name"), table_name="users")
+    op.drop_index(op.f("ix_users_email"), table_name="users")
+    op.drop_table("users")
     op.drop_index(op.f("ix_stations_name"), table_name="stations")
     op.drop_table("stations")
     op.drop_index(op.f("ix_data_sources_title"), table_name="data_sources")

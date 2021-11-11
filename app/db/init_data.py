@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Optional
 
 from app import crud, models, schemas
 from app.core.config import PROJECT_ROOT, get_settings
@@ -38,13 +38,20 @@ class Data:
             / "stations.json"
         )
 
+        self.datasources_path = (
+            PROJECT_ROOT / "data" / "Oceans1876" / "data_sources.json"
+        )
+
         with open(self.species_path, "r") as f:
             self.species = json.load(f)["species"]
         with open(self.stations_path, "r") as f:
             self.stations = json.load(f)
+        with open(self.datasources_path, "r") as f:
+            self.data_sources_list = json.load(f)
 
     def create_all(self) -> None:
         self.create_superuser()
+        self.import_data_sources()
         self.import_species()
         self.import_stations()
 
@@ -64,44 +71,79 @@ class Data:
             logger.info(f"Superuser already exists: {settings.FIRST_SUPERUSER}")
 
     def get_data_source(
-        self, data_source_id: int, data_source_name: str
-    ) -> models.DataSource:
+        self,
+        data_source_id: int
+        # , data_source_name: str
+    ) -> Optional[models.DataSource]:
         data_source = crud.data_source.get(self.db, data_source_id)
         if data_source:
             return data_source
+        return None
+        # logger.info(f"Creating data source: {data_source_name}")
+        # return crud.data_source.create(
+        #     self.db,
+        #     obj_in=schemas.DataSourceCreate(
+        #         **{"id": data_source_id, "title": data_source_name}
+        #     ),
+        # )
 
-        logger.info(f"Creating data source: {data_source_name}")
-        return crud.data_source.create(
-            self.db,
-            obj_in=schemas.DataSourceCreate(
-                **{"id": data_source_id, "title": data_source_name}
-            ),
-        )
+    def import_data_sources(self) -> None:
+        logger.info("Importing data sources")
+
+        for data_source in self.data_sources_list:
+            logger.info(f"Importing Data Soruce: {data_source['title']}")
+
+            obj_in = {
+                "id": data_source["id"],
+                "title": data_source["title"],
+                "title_short": data_source["titleShort"],
+                "description": data_source.get("description"),
+                "curation": data_source["curation"],
+                "record_count": data_source.get("recordCount"),
+                "updated_at": data_source["updatedAt"],
+                "is_out_link_ready": data_source["isOutlinkReady"],
+                "home_url": data_source.get("homeURL"),
+                "url_template": data_source.get("URL_template"),
+            }
+
+            data = self.get_data_source(data_source["id"])
+            if not data:
+                crud.data_source.create(
+                    self.db, obj_in=schemas.DataSourceCreate(**obj_in)
+                )
+            else:
+                crud.data_source.update(
+                    self.db, obj_in=schemas.DataSourceUpdate(**obj_in), db_obj=data
+                )
 
     def import_species(self) -> None:
-        logger.info("Importing species and data sources")
+        logger.info("Importing species")
 
-        for name, sp in self.species.items():
-            logger.info(f"Importing species: {name}")
+        for record_id, sp in self.species.items():
+            logger.info(f"Importing species: {sp['input']} ({record_id})")
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
             data_source = self.data_sources.setdefault(
                 sp_data["dataSourceId"],
-                self.get_data_source(
-                    sp_data["dataSourceId"], sp_data["dataSourceTitleShort"]
-                ),
+                self.get_data_source(sp_data["dataSourceId"]),
             )
 
             obj_in = {
                 "id": sp["inputId"],
+                "record_id": sp_data["recordId"],
+                "current_record_id": sp_data["currentRecordId"],
                 "matched_name": sp_data["matchedName"],
-                "matched_canonical_simple_name": sp_data["matchedCanonicalSimple"],
-                "matched_canonical_full_name": sp_data["matchedCanonicalFull"],
+                "matched_canonical_simple_name": sp_data.get("matchedCanonicalSimple"),
+                "matched_canonical_full_name": sp_data.get("matchedCanonicalFull"),
+                "current_name": sp_data.get("currentName"),
+                "current_canonical_simple_name": sp_data.get("currentCanonicalSimple"),
+                "current_canonical_full_name": sp_data.get("currentCanonicalFull"),
                 "common_name": "",
                 "classification_path": sp_data.get("classificationPath"),
                 "classification_ranks": sp_data.get("classificationRanks"),
                 "classification_ids": sp_data.get("classificationIds"),
+                "outlink": sp_data.get("outlink"),
                 "data_source_id": data_source.id,
             }
 
@@ -163,15 +205,13 @@ class Data:
 
             station_species = set()
             for sp in station_data["Species"]:
-                if sp["name"] not in station_species:
-                    station_species.add(sp["name"])
-                    species_data = self.species[sp["name"]].get("bestResult")
-                    if species_data:
-                        species = crud.species.get(
-                            self.db, self.species[sp["name"]]["inputId"]
-                        )
-                        if species:
-                            station.species.append(species)
+                if sp.get("recordId") and sp["recordId"] not in station_species:
+                    station_species.add(sp["recordId"])
+                    species = crud.species.get(
+                        self.db, self.species[sp["recordId"]]["inputId"]
+                    )
+                    if species:
+                        station.species.append(species)
 
 
 if __name__ == "__main__":

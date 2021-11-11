@@ -3,6 +3,7 @@
 - Make sure [Poetry](https://github.com/python-poetry/poetry) is available in your environment.
 - Install the dependencies: `poetry install`.
 - Create a PostgreSQL database and install PostGIS extension on it.
+- Create PostgreSQL extension for fuzzy string matching. `CREATE EXTENSION pg_trgm` on the database that you have created.
 - Create `.env` file in project root (see `.env-example` for the available variables).
 - To update tables and add new models run, `poetry run ./scripts/migrations_create.sh "<Your Message Here>"`. This will stage all the changes.
 - To create tables and apply the migrations run, `poetry run ./scripts/migrations_forward.sh`.

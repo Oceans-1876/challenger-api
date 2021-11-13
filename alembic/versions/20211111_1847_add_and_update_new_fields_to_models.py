@@ -1,14 +1,14 @@
 """Add and Update new fields to models
 
 Revision ID: 2567fffa963f
-Revises: 
+Revises:
 Create Date: 2021-11-11 18:47:47.034246+00:00
 
 """
-from alembic import op
 import sqlalchemy as sa
-import app
 
+import app
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "2567fffa963f"

@@ -67,8 +67,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                     column_name = column
                     order_func = asc
 
-                if hasattr(self.model, column_name):
-                    order_by_args.append(order_func(getattr(self.model, column_name)))
+                for entity in query.column_descriptions:
+                    if hasattr(entity["type"], column_name):
+                        # TODO: test this for join queries where the models/entities
+                        #       have columns with the same name.
+                        #       The query probably fails or won't work, which means we
+                        #       we have to construct column names differently.
+                        order_by_args.append(
+                            order_func(getattr(entity["type"], column_name))
+                        )
+                        break
 
         return query.order_by(*order_by_args)
 

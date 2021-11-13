@@ -20,9 +20,9 @@ args = parser.parse_args()
 
 
 class Data:
-    def __init__(self, test_mode) -> None:
+    def __init__(self, test_mode: bool) -> None:
         self.db = SessionLocal()
-        self.data_sources: Dict[str, models.DataSource] = {}
+        self.data_sources: Dict[int, models.DataSource] = {}
 
         self.species_path = (
             PROJECT_ROOT
@@ -38,13 +38,20 @@ class Data:
             / "stations.json"
         )
 
+        self.datasources_path = (
+            PROJECT_ROOT / "data" / "Oceans1876" / "data_sources.json"
+        )
+
         with open(self.species_path, "r") as f:
             self.species = json.load(f)["species"]
         with open(self.stations_path, "r") as f:
             self.stations = json.load(f)
+        with open(self.datasources_path, "r") as f:
+            self.data_sources_list = json.load(f)
 
     def create_all(self) -> None:
         self.create_superuser()
+        self.import_data_sources()
         self.import_species()
         self.import_stations()
 
@@ -63,35 +70,47 @@ class Data:
         else:
             logger.info(f"Superuser already exists: {settings.FIRST_SUPERUSER}")
 
-    def get_data_source(
-        self, data_source_id: int, data_source_name: str
-    ) -> models.DataSource:
-        data_source = crud.data_source.get(self.db, data_source_id)
-        if data_source:
-            return data_source
+    def import_data_sources(self) -> None:
+        logger.info("Importing data sources")
 
-        logger.info(f"Creating data source: {data_source_name}")
-        return crud.data_source.create(
-            self.db,
-            obj_in=schemas.DataSourceCreate(
-                **{"id": data_source_id, "title": data_source_name}
-            ),
-        )
+        for data_source_data in self.data_sources_list:
+            logger.info(f"Importing Data Source: {data_source_data['title']}")
+
+            obj_in = {
+                "id": data_source_data["id"],
+                "title": data_source_data["title"],
+                "title_short": data_source_data["titleShort"],
+                "description": data_source_data.get("description"),
+                "curation": data_source_data["curation"],
+                "record_count": data_source_data.get("recordCount"),
+                "updated_at": data_source_data["updatedAt"],
+                "is_out_link_ready": data_source_data["isOutlinkReady"],
+                "home_url": data_source_data.get("homeURL"),
+                "url_template": data_source_data.get("URL_template"),
+            }
+
+            data_source = crud.data_source.get(self.db, data_source_data["id"])
+            if data_source:
+                data_source = crud.data_source.update(
+                    self.db,
+                    obj_in=schemas.DataSourceUpdate(**obj_in),
+                    db_obj=data_source,
+                )
+            else:
+                data_source = crud.data_source.create(
+                    self.db, obj_in=schemas.DataSourceCreate(**obj_in)
+                )
+            self.data_sources[data_source.id] = data_source
 
     def import_species(self) -> None:
-        logger.info("Importing species and data sources")
+        logger.info("Importing species")
 
         for record_id, sp in self.species.items():
             logger.info(f"Importing species: {sp['input']} ({record_id})")
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
-            data_source = self.data_sources.setdefault(
-                sp_data["dataSourceId"],
-                self.get_data_source(
-                    sp_data["dataSourceId"], sp_data["dataSourceTitleShort"]
-                ),
-            )
+            data_source = self.data_sources[sp_data["dataSourceId"]]
 
             obj_in = {
                 "id": sp["inputId"],
@@ -107,6 +126,7 @@ class Data:
                 "classification_path": sp_data.get("classificationPath"),
                 "classification_ranks": sp_data.get("classificationRanks"),
                 "classification_ids": sp_data.get("classificationIds"),
+                "outlink": sp_data.get("outlink"),
                 "data_source_id": data_source.id,
             }
 

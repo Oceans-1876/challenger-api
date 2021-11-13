@@ -26,6 +26,7 @@ class Species(Base):
     classification_path: Optional[str] = Column(String(length=800))
     classification_ranks: Optional[str] = Column(String(length=800))
     classification_ids: Optional[str] = Column(String(length=800))
+    outlink: Optional[str] = Column(String(length=300))
     data_source_id: int = Column(Integer, ForeignKey("data_sources.id"), nullable=False)
 
     data_source: "DataSource" = relationship("DataSource", back_populates="species")

@@ -41,3 +41,13 @@ def read_data_source_by_id(
     """Get a data source by id."""
     data_source = crud.data_source.get(db, id=data_source_id)
     return data_source
+
+
+@router.get("/{data_source_id}/species", response_model=List[schemas.SpeciesSummary])
+def read_data_source_species(
+    data_source_id: int,
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """Get all the species for the given data source id."""
+    species = crud.data_source.get_species(db, id=data_source_id)
+    return species

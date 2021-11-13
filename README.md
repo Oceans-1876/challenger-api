@@ -1,8 +1,10 @@
 ### Set up
 
+- After cloning the repo, make sure to get both `data` and `fonts` submodules (`git submodule init` and `git submodule update`).
 - Make sure [Poetry](https://github.com/python-poetry/poetry) is available in your environment.
 - Install the dependencies: `poetry install`.
-- Create a PostgreSQL database and install PostGIS extension on it.
+- Create a PostgreSQL database and install PostGIS extension on it (`CREATE EXTENSION postgis`).
+- Create PostgreSQL extension for fuzzy string matching. `CREATE EXTENSION pg_trgm` on the database that you have created.
 - Create `.env` file in project root (see `.env-example` for the available variables).
 - To update tables and add new models run, `poetry run ./scripts/migrations_create.sh "<Your Message Here>"`. This will stage all the changes.
 - To create tables and apply the migrations run, `poetry run ./scripts/migrations_forward.sh`.
@@ -34,6 +36,8 @@ for details of command to create and apply migrations.
 | run_dev_email_server.sh | Starts a python email server that captures emails in the terminal. Use the Email-related values in `.env-example` to use this server as the backend.                       |
 | run_dev_server.sh       | Starts the API dev server.                                                                                                                                                 |
 | run_tests.sh            | Runs the tests with `pytest` with coverage report. It handles creation of a test database for `POSTGRES_TEST_DB` set in `.env`.                                            |
+| run_coverage.sh         | Runs `run_tests.sh` script with coverage report.                                                                                                                           |
+| build_docker.sh         | Builds the docker image.                                                                                                                                                   |
 
 ### Usage
 

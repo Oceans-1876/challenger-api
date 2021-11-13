@@ -1,7 +1,7 @@
 from datetime import date  # noqa
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Column, Integer, String, Date, Boolean, Text
+from sqlalchemy import Boolean, Column, Date, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base

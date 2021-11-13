@@ -1,11 +1,10 @@
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
+from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, func
 from sqlalchemy.orm import Query, Session
-from sqlalchemy.sql.expression import text
-from datetime import date
 
 from app.db.base_class import Base
 
@@ -69,8 +68,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                     column_name = column
                     order_func = asc
 
-                if hasattr(self.model, column_name):
-                    order_by_args.append(order_func(getattr(self.model, column_name)))
+                for entity in query.column_descriptions:
+                    if hasattr(entity["type"], column_name):
+                        # TODO: test this for join queries where the models/entities
+                        #       have columns with the same name.
+                        #       The query probably fails or won't work, which means we
+                        #       we have to construct column names differently.
+                        order_by_args.append(
+                            order_func(getattr(entity["type"], column_name))
+                        )
+                        break
 
         return query.order_by(*order_by_args)
 
@@ -167,11 +174,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             # )
             # SIMILARITY function will work only if the extension is enabled.
             # only works with string data
-            query = db.query(self.model).order_by(
-                desc(text(f"SIMILARITY({search_column},'{search_term}')"))
+            similarity_func = func.similarity(
+                getattr(self.model, search_column), search_term
+            )
+            query = (db.query(self.model).where(similarity_func > 0.1)).order_by(
+                similarity_func.desc()
             )
         else:
-            query = db.query(self.model)
+            raise HTTPException(
+                status_code=400, detail=f"{search_column} is not a valid column."
+            )
 
         ordered_query = self.order_by(query, order_by=order_by)
 

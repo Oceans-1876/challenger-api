@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict
 
 from app import crud, models, schemas
 from app.core.config import PROJECT_ROOT, get_settings
@@ -20,9 +20,9 @@ args = parser.parse_args()
 
 
 class Data:
-    def __init__(self, test_mode) -> None:
+    def __init__(self, test_mode: bool) -> None:
         self.db = SessionLocal()
-        self.data_sources: Dict[str, models.DataSource] = {}
+        self.data_sources: Dict[int, models.DataSource] = {}
 
         self.species_path = (
             PROJECT_ROOT
@@ -70,51 +70,37 @@ class Data:
         else:
             logger.info(f"Superuser already exists: {settings.FIRST_SUPERUSER}")
 
-    def get_data_source(
-        self,
-        data_source_id: int
-        # , data_source_name: str
-    ) -> Optional[models.DataSource]:
-        data_source = crud.data_source.get(self.db, data_source_id)
-        if data_source:
-            return data_source
-        return None
-        # logger.info(f"Creating data source: {data_source_name}")
-        # return crud.data_source.create(
-        #     self.db,
-        #     obj_in=schemas.DataSourceCreate(
-        #         **{"id": data_source_id, "title": data_source_name}
-        #     ),
-        # )
-
     def import_data_sources(self) -> None:
         logger.info("Importing data sources")
 
-        for data_source in self.data_sources_list:
-            logger.info(f"Importing Data Soruce: {data_source['title']}")
+        for data_source_data in self.data_sources_list:
+            logger.info(f"Importing Data Source: {data_source_data['title']}")
 
             obj_in = {
-                "id": data_source["id"],
-                "title": data_source["title"],
-                "title_short": data_source["titleShort"],
-                "description": data_source.get("description"),
-                "curation": data_source["curation"],
-                "record_count": data_source.get("recordCount"),
-                "updated_at": data_source["updatedAt"],
-                "is_out_link_ready": data_source["isOutlinkReady"],
-                "home_url": data_source.get("homeURL"),
-                "url_template": data_source.get("URL_template"),
+                "id": data_source_data["id"],
+                "title": data_source_data["title"],
+                "title_short": data_source_data["titleShort"],
+                "description": data_source_data.get("description"),
+                "curation": data_source_data["curation"],
+                "record_count": data_source_data.get("recordCount"),
+                "updated_at": data_source_data["updatedAt"],
+                "is_out_link_ready": data_source_data["isOutlinkReady"],
+                "home_url": data_source_data.get("homeURL"),
+                "url_template": data_source_data.get("URL_template"),
             }
 
-            data = self.get_data_source(data_source["id"])
-            if not data:
-                crud.data_source.create(
-                    self.db, obj_in=schemas.DataSourceCreate(**obj_in)
+            data_source = crud.data_source.get(self.db, data_source_data["id"])
+            if data_source:
+                data_source = crud.data_source.update(
+                    self.db,
+                    obj_in=schemas.DataSourceUpdate(**obj_in),
+                    db_obj=data_source,
                 )
             else:
-                crud.data_source.update(
-                    self.db, obj_in=schemas.DataSourceUpdate(**obj_in), db_obj=data
+                data_source = crud.data_source.create(
+                    self.db, obj_in=schemas.DataSourceCreate(**obj_in)
                 )
+            self.data_sources[data_source.id] = data_source
 
     def import_species(self) -> None:
         logger.info("Importing species")
@@ -124,10 +110,7 @@ class Data:
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
-            data_source = self.data_sources.setdefault(
-                sp_data["dataSourceId"],
-                self.get_data_source(sp_data["dataSourceId"]),
-            )
+            data_source = self.data_sources[sp_data["dataSourceId"]]
 
             obj_in = {
                 "id": sp["inputId"],
@@ -161,7 +144,7 @@ class Data:
         # First remove all stations species relations
         models.stations_species_table.delete()
 
-        for station_data in self.stations:
+        for idx, station_data in enumerate(self.stations, start=1):
             logger.info(f"Importing Station {station_data['Station']}")
 
             longitude = station_data["Decimal Longitude"]
@@ -170,6 +153,7 @@ class Data:
 
             obj_in = {
                 "name": station_data["Station"],
+                "order": idx,
                 "sediment_sample": station_data.get("Sediment sample"),
                 "coordinates": coordinates,
                 "location": station_data["Location"],
@@ -180,9 +164,7 @@ class Data:
                 "fao_area": station_data["FAOarea"],
                 "gear": station_data.get("Gear"),
                 "depth_fathoms": station_data.get("Depth (fathoms)"),
-                "bottom_water_temp_c": station_data.get(
-                    "Bottom water temperature (C) "
-                ),
+                "bottom_water_temp_c": station_data.get("Bottom water temperature (C)"),
                 "bottom_water_depth_fathoms": station_data.get(
                     "Bottom water depth D (fathoms)"
                 ),

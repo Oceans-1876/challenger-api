@@ -31,6 +31,7 @@ class SpeciesDetailsBase(SpeciesBase):
     classification_path: Optional[str]
     classification_ranks: Optional[str]
     classification_ids: Optional[str]
+    outlink: Optional[str]
     data_source_id: int
 
 

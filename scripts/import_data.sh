@@ -9,4 +9,3 @@ then
 else
    python app/db/init_data.py
 fi
-

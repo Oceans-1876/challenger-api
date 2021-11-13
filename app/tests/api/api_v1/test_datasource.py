@@ -1,53 +1,23 @@
-from typing import Dict
-from fastapi.testclient import TestClient
-from fastapi import APIRouter, Depends
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
 from app.core.config import get_settings
-
-import requests
 
 settings = get_settings()
 
-from fastapi import FastAPI, Request
 
-
-def test_read_datasource(client: TestClient, db: Session) -> None:
-    # data = {"email": username, "password": password}
+def test_read_data_sources(client: TestClient, db: Session) -> None:
     r = client.get(f"{settings.API_V1_STR}/data_source/")
-    assert 200 <= r.status_code < 300
-    # created_user = r.json()
-    data_sources = crud.species.get_multi(db)
-    assert data_sources
+    assert r.status_code == 200
 
 
-# [1, 2, 3, 4] are the ID's of the datasources which should be tested in the database.
+# [1, 2, 3, 4] are the ID's of the data sources which should be tested in the database.
 @pytest.mark.parametrize("data_source_id", [1, 2, 3, 4])
-def test_read_datasource_by_id(
+def test_return_200_for_existing_data_source(
     client: TestClient, data_source_id: int, db: Session
 ) -> None:
     r = client.get(f"{settings.API_V1_STR}/data_source/{data_source_id}")
-    assert 200 <= r.status_code < 300
-    response_ = r.json()
-    assert response_["id"] == data_source_id
-
-
-@pytest.mark.parametrize("data_source_id", [2, -2, 4, 6])
-def test_read_datasource_by_id(
-    client: TestClient, data_source_id: int, db: Session
-) -> None:
-    r = client.get(f"{settings.API_V1_STR}/data_source/{data_source_id}")
-    assert 200 <= r.status_code < 300
-    response_ = r.json()
-    assert response_["id"] == data_source_id
-
-@pytest.mark.parametrize("data_source_id", [0, 0, 0, 0])
-def test_read_datasource_by_id(
-    client: TestClient, data_source_id: int, db: Session
-) -> None:
-    r = client.get(f"{settings.API_V1_STR}/data_source/{data_source_id}")
-    assert 200 <= r.status_code < 300
+    assert r.status_code == 200
     response_ = r.json()
     assert response_["id"] == data_source_id

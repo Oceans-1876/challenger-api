@@ -1,8 +1,9 @@
 from fastapi import FastAPI
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api.api_v1.api import api_router
-from app.core.config import get_settings
+from app.core.config import PROJECT_ROOT, get_settings
 
 settings = (
     get_settings()
@@ -13,6 +14,12 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=None,
+)
+
+app.mount(
+    "/fonts",
+    StaticFiles(directory=PROJECT_ROOT / "fonts"),
+    name="fonts",
 )
 
 # Set all CORS enabled origins

@@ -3,7 +3,7 @@
 - After cloning the repo, make sure to get both `data` and `fonts` submodules (`git submodule init` and `git submodule update`).
 - Make sure [Poetry](https://github.com/python-poetry/poetry) is available in your environment.
 - Install the dependencies: `poetry install`.
-- Create a PostgreSQL database and install PostGIS extension on it.
+- Create a PostgreSQL database and install PostGIS extension on it (`CREATE EXTENSION postgis`).
 - Create PostgreSQL extension for fuzzy string matching. `CREATE EXTENSION pg_trgm` on the database that you have created.
 - Create `.env` file in project root (see `.env-example` for the available variables).
 - To update tables and add new models run, `poetry run ./scripts/migrations_create.sh "<Your Message Here>"`. This will stage all the changes.

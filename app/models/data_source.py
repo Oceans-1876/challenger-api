@@ -17,12 +17,14 @@ class DataSource(Base):
 
     id: int = Column(Integer, primary_key=True, index=True)
     title: str = Column(String(150), nullable=False, index=True)
-    title_short: str = Column(String(150), nullable=False)
+    title_short: str = Column(String(150), nullable=False, default="")
     description: Optional[str] = Column(Text)
-    curation: str = Column(String(90), nullable=False)
+    curation: str = Column(String(90), nullable=False, default="")
     record_count: Optional[int] = Column(Integer)
-    updated_at: date = Column(Date, nullable=False)  # noqa: F811
-    is_out_link_ready: bool = Column(Boolean, nullable=False)
+    updated_at: date = Column(
+        Date, nullable=False, default=date(1876, 8, 1)
+    )  # noqa: F811
+    is_out_link_ready: bool = Column(Boolean, nullable=False, default=False)
     home_url: Optional[str] = Column(String(length=200))
     url_template: Optional[str] = Column(String(length=200))
 

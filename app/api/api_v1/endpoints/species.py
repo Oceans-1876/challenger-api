@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -58,4 +58,6 @@ def read_species_by_id(
 ) -> Any:
     """Get a specific species by id."""
     species = crud.species.get(db, id=species_id)
+    if not species:
+        raise HTTPException(status_code=404, detail=f"Species not found: ${species_id}")
     return species

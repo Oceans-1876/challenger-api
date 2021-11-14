@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -40,6 +40,10 @@ def read_data_source_by_id(
 ) -> Any:
     """Get a data source by id."""
     data_source = crud.data_source.get(db, id=data_source_id)
+    if not data_source:
+        raise HTTPException(
+            status_code=404, detail=f"Data source not found: ${data_source_id}"
+        )
     return data_source
 
 

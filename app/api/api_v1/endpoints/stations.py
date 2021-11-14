@@ -1,6 +1,6 @@
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -50,10 +50,9 @@ def read_stations_by_search(
 
 
 @router.get("/{station_id}", response_model=schemas.StationDetails)
-def read_station_by_id(
-    station_id: str,
-    db: Session = Depends(deps.get_db),
-) -> Any:
+def read_station_by_id(station_id: str, db: Session = Depends(deps.get_db)) -> Any:
     """Get a specific station by id."""
     station = crud.station.get(db, id=station_id)
+    if not station:
+        raise HTTPException(status_code=404, detail=f"Station not found: ${station_id}")
     return station

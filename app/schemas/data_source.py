@@ -2,11 +2,9 @@
 [Global Names](https://verifier.globalnames.org/data_sources).
 """
 from datetime import date  # noqa
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel
-
-from app.schemas.species import SpeciesSummary
 
 
 class DataSourceBase(BaseModel):
@@ -42,9 +40,7 @@ class DataSourceUpdate(DataSourceDetailsBase):
     pass
 
 
-class DataSourceDetailsInDB(DataSourceBase):
-    species: List[SpeciesSummary]
-
+class DataSourceDetailsInDB(DataSourceDetailsBase):
     class Config:
         orm_mode = True
 

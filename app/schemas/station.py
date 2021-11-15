@@ -31,6 +31,7 @@ class StationSummary(StationSummaryInDB):
 
 
 class StationDetailsBase(StationBase):
+    order: int
     sediment_sample: Optional[str] = None
     location: str
     water_body: str

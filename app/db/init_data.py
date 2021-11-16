@@ -1,8 +1,10 @@
 import argparse
+import csv
 import json
 import logging
 from datetime import datetime
-from typing import Dict
+from functools import reduce
+from typing import Dict, List
 
 from app import crud, models, schemas
 from app.core.config import PROJECT_ROOT, get_settings
@@ -24,30 +26,39 @@ class Data:
         self.db = SessionLocal()
         self.data_sources: Dict[int, models.DataSource] = {}
 
-        self.species_path = (
+        species_path = (
             PROJECT_ROOT
             / "data"
             / ("Oceans1876" if not test_mode else "Oceans1876_subset")
             / "species.json"
         )
 
-        self.stations_path = (
+        stations_path = (
             PROJECT_ROOT
             / "data"
             / ("Oceans1876" if not test_mode else "Oceans1876_subset")
             / "stations.json"
         )
 
-        self.datasources_path = (
-            PROJECT_ROOT / "data" / "Oceans1876" / "data_sources.json"
-        )
+        data_sources_path = PROJECT_ROOT / "data" / "Oceans1876" / "data_sources.json"
 
-        with open(self.species_path, "r") as f:
+        hathitrust_path = PROJECT_ROOT / "data" / "HathiTrust" / "sections.csv"
+
+        with open(species_path, "r") as f:
             self.species = json.load(f)["species"]
-        with open(self.stations_path, "r") as f:
+        with open(stations_path, "r") as f:
             self.stations = json.load(f)
-        with open(self.datasources_path, "r") as f:
+        with open(data_sources_path, "r") as f:
             self.data_sources_list = json.load(f)
+        with open(hathitrust_path, "r") as f:
+            self.hathitrust_urls: Dict[str, str] = reduce(
+                lambda all_urls, section_props: all_urls.update(
+                    {section_props["Section"]: section_props["Url"]}
+                )
+                or all_urls,
+                csv.DictReader(f),
+                {},
+            )
 
     def create_all(self) -> None:
         self.create_superuser()
@@ -138,6 +149,15 @@ class Data:
             else:
                 crud.species.create(self.db, obj_in=schemas.SpeciesCreate(**obj_in))
 
+    def get_hathitrust_url(self, ranges: List[List[str]]) -> List[str]:
+        urls = []
+        for section_name, pages in ranges:
+            first_page = int(pages.split("-")[0]) - 1
+            urls.append(
+                f"{self.hathitrust_urls[section_name]}?urlappend=%3Bseq={first_page}"
+            )
+        return urls
+
     def import_stations(self) -> None:
         logger.info("Importing stations")
 
@@ -177,6 +197,9 @@ class Data:
                 ),
                 "water_temp_c_at_depth_fathoms": station_data["Temp (F) at Fathoms"],
                 "text": station_data["HathiTrust"]["Text"],
+                "hathitrust_urls": self.get_hathitrust_url(
+                    station_data["HathiTrust"]["Range"]
+                ),
             }
 
             station = crud.station.get(self.db, station_data["Station"])

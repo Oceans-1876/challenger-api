@@ -56,6 +56,7 @@ class Station(Base):
         JSON, nullable=False
     )
     text: str = Column(Text, nullable=False)
+    hathitrust_urls: List[str] = Column(JSON, default=[], nullable=False)
 
     species: List["Species"] = relationship(
         "Species", back_populates="stations", secondary=stations_species_table

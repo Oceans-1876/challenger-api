@@ -47,6 +47,7 @@ class StationDetailsBase(StationBase):
     specific_gravity_at_surface: Optional[float] = None
     water_temp_c_at_depth_fathoms: Dict[str, Optional[float]]
     text: str
+    hathitrust_urls: List[str] = []
 
 
 class StationCreate(StationDetailsBase):

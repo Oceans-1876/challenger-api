@@ -33,7 +33,7 @@ class Station(Base):
     __tablename__ = "stations"
 
     name: str = Column(String(length=20), primary_key=True, index=True)
-    order: int = Column(Integer, default=1)
+    order: int = Column(Integer, nullable=False)
     sediment_sample: Optional[str] = Column(String(length=50))
     coordinates: WKBElement = Column(
         Geometry("POINT", srid=4326, spatial_index=True),
@@ -56,6 +56,7 @@ class Station(Base):
         JSON, nullable=False
     )
     text: str = Column(Text, nullable=False)
+    hathitrust_urls: List[str] = Column(JSON, default=[], nullable=False)
 
     species: List["Species"] = relationship(
         "Species", back_populates="stations", secondary=stations_species_table

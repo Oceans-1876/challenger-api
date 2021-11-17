@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -30,21 +30,17 @@ def read_all_species(
     return species
 
 
-@router.get("/search/", response_model=List[schemas.SpeciesSummary])
+@router.post("/search/", response_model=List[schemas.SpeciesSummary])
 def read_species_by_search(
-    search_term: str,
-    search_column: str,
+    expressions: Union[schemas.Expression, schemas.ExpressionGroup],
     db: Session = Depends(deps.get_db),
     limit: int = 0,
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:
-    """Retrieves the species based on the
-    requested search params.
-    """
+    """Retrieves the species based on the given search expressions."""
     species = crud.species.search(
         db,
-        search_column=search_column,
-        search_term=search_term,
+        expressions=expressions,
         order_by=order_by,
         limit=limit,
     )

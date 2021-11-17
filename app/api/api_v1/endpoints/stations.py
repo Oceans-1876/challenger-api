@@ -1,10 +1,11 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
+from app.models import stations_species_table
 
 router = APIRouter()
 
@@ -31,18 +32,18 @@ def read_all_stations(
     return stations
 
 
-@router.get("/search/", response_model=List[schemas.StationSummary])
+@router.post("/search/", response_model=List[schemas.StationSummary])
 def read_stations_by_search(
-    search_term: str,
-    search_column: str,
+    expressions: Union[schemas.Expression, schemas.ExpressionGroup],
     db: Session = Depends(deps.get_db),
     limit: int = 0,
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:
+    """Retrieves the stations based on the given search expressions."""
     stations = crud.station.search(
         db,
-        search_column=search_column,
-        search_term=search_term,
+        expressions=expressions,
+        relations=[stations_species_table],
         order_by=order_by,
         limit=limit,
     )

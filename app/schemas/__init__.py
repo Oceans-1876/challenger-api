@@ -5,6 +5,7 @@ from .data_source import (
     DataSourceUpdate,
 )
 from .msg import Msg
+from .search import Expression, ExpressionGroup, Join, Operator
 from .species import (
     SpeciesCreate,
     SpeciesDetails,

@@ -1,16 +1,35 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import (
+    Any,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Type,
+    TypedDict,
+    TypeVar,
+    Union,
+    cast,
+)
 
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import asc, desc, func
+from sqlalchemy import Column, Table, and_, asc, desc, func, or_
 from sqlalchemy.orm import Query, Session
+from sqlalchemy.sql.elements import BinaryExpression
+from sqlalchemy.sql.functions import _FunctionGenerator
 
 from app.db.base_class import Base
+from app.schemas import Expression, ExpressionGroup, Join
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+
+
+class SearchExpressions(TypedDict):
+    clauses: List[BinaryExpression]
+    fuzzy_funcs: List[_FunctionGenerator]
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
@@ -25,23 +44,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 A SQLAlchemy model class
         """
         self.model = model
-
-    def get(self, db: Session, id: Any) -> Optional[ModelType]:
-        """Get a database record by id.
-
-        Parameters
-        ----------
-        db : Session
-            The database session.
-        id : Any
-            The object id to fetch from the database.
-
-        Returns
-        -------
-        Optional[ModelType]
-            An instance of the SQLAlchemy for the fetched object, if it exists.
-        """
-        return db.query(self.model).filter(self.model.id == id).first()
 
     def order_by(self, query: Query, *, order_by: Optional[List[str]] = None) -> Query:
         """Order the query by the given list of columns.
@@ -80,6 +82,198 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                         break
 
         return query.order_by(*order_by_args)
+
+    def create_search_expressions(
+        self,
+        expressions: Union[Expression, ExpressionGroup],
+        *,
+        relations: Optional[List[Table]] = None,
+    ) -> SearchExpressions:
+        """Create SQLAlchemy search expressions from the given Expression or
+        ExpressionGroup.
+        Return a Dict with two keys: `clauses` and `fuzzy_funcs`. The former
+        can be passed to a query.filter() call, while the latter can be used to order
+        the query by the fuzzy_funcs.
+
+        Parameters
+        ----------
+        expressions : Union[Expression, ExpressionGroup]
+            The search expressions. See the `search` method for an example.
+        relations : Optional[List[Table]]
+            The relations to use for discovering columns.
+
+        Returns
+        -------
+        SearchExpressions
+        """
+        search_expressions = SearchExpressions(clauses=[], fuzzy_funcs=[])
+
+        if isinstance(expressions, ExpressionGroup):
+            if expressions.join == Join.AND:
+                join_func = and_
+            elif expressions.join == Join.OR:
+                join_func = or_
+            else:
+                raise ValueError(f"Invalid join type: {expressions.join}")
+
+            sub_clauses: List[BinaryExpression] = []
+            for expression in expressions.expressions:
+                sub_search_expressions = self.create_search_expressions(
+                    expression, relations=relations
+                )
+                sub_clauses.append(
+                    cast(BinaryExpression, and_(*sub_search_expressions["clauses"]))
+                )
+                search_expressions["fuzzy_funcs"].extend(
+                    sub_search_expressions["fuzzy_funcs"]
+                )
+            search_expressions["clauses"].append(
+                cast(BinaryExpression, join_func(*sub_clauses))
+            )
+        else:
+            expression = expressions
+            column: Optional[Column] = getattr(self.model, expression.column_name, None)
+            if not column:
+                has_column = False
+                if relations:
+                    for relation in relations:
+                        try:
+                            column = relation.c[expression.column_name]
+                            has_column = True
+                        except AttributeError:
+                            pass
+                        if has_column:
+                            break
+                if not has_column:
+                    raise ValueError(f"Invalid column name: {expression.column_name}")
+
+            if not hasattr(column, "type"):
+                raise ValueError(f"Invalid column name: {expression.column_name}")
+
+            if column.type.python_type == str and expression.fuzzy:  # type: ignore
+                similarity_func = func.similarity(column, expression.search_term)
+                search_expressions["clauses"].append(
+                    cast(
+                        BinaryExpression,
+                        similarity_func >= expression.min_string_similarity,
+                    ),
+                )
+                search_expressions["fuzzy_funcs"].append(
+                    cast(_FunctionGenerator, similarity_func)
+                )
+            else:
+                operator_func = getattr(column, f"__{expression.operator}__", None)
+                if not operator_func:
+                    raise ValueError(f"Invalid operator: {expression.operator}")
+                search_expressions["clauses"].append(
+                    operator_func(expression.search_term)
+                )
+
+        return search_expressions
+
+    def search(
+        self,
+        db: Session,
+        expressions: Union[Expression, ExpressionGroup],
+        *,
+        relations: Optional[List[Table]] = None,
+        order_by: Optional[List[str]] = None,
+        limit: int = 0,
+    ) -> List[ModelType]:
+        """Search all the records from the database using the given search expressions,
+        then order the results by the columns in `order_by` and return
+        the first limited results.
+
+        Here is an example of expressions for the Station model:
+        {
+          "join": "AND",
+          "expressions": [
+            {
+              "column_name": "fao_area",
+              "search_term": "27",
+              "operator": "eq"
+            },
+            {
+              "join": "OR",
+              "expressions": [
+                {
+                  "column_name": "species_id",
+                  "search_term": "b92a3b6f-8816-5c29-ba10-83bc78eab8ae",
+                  "operator": "eq"
+                },
+                {
+                  "column_name": "species_id",
+                  "search_term": "a57a7c8b-1b3b-57f9-8101-f456834d18ea",
+                  "operator": "eq"
+                }
+              ]
+            }
+          ]
+        }
+        This example searches for all stations that are in the FAO area 27 and
+        have at least one of the species given by their IDs.
+        This requires `app.models.stations.stations_species_table` to be passed as
+        a relation to provide `species_id`, otherwise it will raise an error.
+
+        Parameters
+        ----------
+        db : Session
+            The database session.
+        expressions : Union[Expression, ExpressionGroup]
+            The search expressions.
+        relations : Optional[List[Table]]
+            The relations to be joined in the search.
+        order_by : Optional[List[str]]
+            List of column names to order by. If a column name is prefixed with '-',
+            order it in descending order.
+        limit : int, optional
+            This value controls the number of results returned, by default 0.
+
+        Returns
+        -------
+        List[ModelType]
+            A list of SQLAlchemy model instances from the query.
+        """
+        try:
+            search_expressions = self.create_search_expressions(
+                expressions, relations=relations
+            )
+        except ValueError as e:
+            raise HTTPException(
+                status_code=400, detail=f"Error with search expressions: {e}"
+            )
+
+        query = db.query(self.model)
+
+        if relations:
+            for relation in relations:
+                query = query.join(relation)
+
+        query = query.filter(*search_expressions["clauses"]).order_by(
+            *map(lambda f: f.desc(), search_expressions["fuzzy_funcs"])
+        )
+        ordered_query = self.order_by(query, order_by=order_by)
+
+        if limit > 0:
+            return ordered_query.limit(limit).all()
+        return ordered_query.all()
+
+    def get(self, db: Session, id: Any) -> Optional[ModelType]:
+        """Get a database record by id.
+
+        Parameters
+        ----------
+        db : Session
+            The database session.
+        id : Any
+            The object id to fetch from the database.
+
+        Returns
+        -------
+        Optional[ModelType]
+            An instance of the SQLAlchemy for the fetched object, if it exists.
+        """
+        return db.query(self.model).filter(self.model.id == id).first()
 
     def get_multi(
         self,
@@ -131,65 +325,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         query = self.order_by(db.query(self.model), order_by=order_by)
         return query.all()
-
-    def search(
-        self,
-        db: Session,
-        *,
-        search_column: str,
-        search_term: str,
-        order_by: Optional[List[str]] = None,
-        limit: int = 0,
-    ) -> List[ModelType]:
-        """search all the records from the database based on the search column,
-        search term then order the results by particular column and then return
-        the first limited value results.
-
-        Parameters
-        ----------
-        db : Session
-            The database session.
-        search_column : str
-            This string specifies which columns to search the search_term for.
-        search_term : str
-            The string to use to search for in the search_column either startswith
-            or endswith or a fuzzy search.
-        order_by : Optional[List[str]], optional
-            List of column names to order by. If a column name is prefixed with '-',
-            order it in descending order.
-        limit : int, optional
-            This value controls the number of results returned, by default 0.
-
-        Returns
-        -------
-        List[ModelType]
-            A list of SQLAlchemy model instances from the query.
-        """
-        if hasattr(self.model, search_column):
-            # Keeping this as a comment so as to get back to the previous exact match
-            # system for stable response purposes.
-
-            # query = db.query(self.model).filter(
-            #     getattr(self.model, search_column).contains(search_term)
-            # )
-            # SIMILARITY function will work only if the extension is enabled.
-            # only works with string data
-            similarity_func = func.similarity(
-                getattr(self.model, search_column), search_term
-            )
-            query = (db.query(self.model).where(similarity_func > 0.1)).order_by(
-                similarity_func.desc()
-            )
-        else:
-            raise HTTPException(
-                status_code=400, detail=f"{search_column} is not a valid column."
-            )
-
-        ordered_query = self.order_by(query, order_by=order_by)
-
-        if limit > 0:
-            return ordered_query.limit(limit).all()
-        return ordered_query.all()
 
     def create(
         self, db: Session, *, obj_in: Union[CreateSchemaType, Dict[str, Any]]

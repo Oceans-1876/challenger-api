@@ -9,7 +9,7 @@ from app.api import deps
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.SpeciesSummary])
+@router.get("/", response_model=schemas.SpeciesSummaryPagination)
 def read_species(
     db: Session = Depends(deps.get_db),
     skip: int = 0,

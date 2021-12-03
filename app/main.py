@@ -16,11 +16,13 @@ app = FastAPI(
     redoc_url=None,
 )
 
-app.mount(
-    "/fonts",
-    StaticFiles(directory=PROJECT_ROOT / "fonts"),
-    name="fonts",
-)
+if settings.DEBUG == "True":
+    print("Loading Font: ", settings.DEBUG)
+    app.mount(
+        "/fonts",
+        StaticFiles(directory=PROJECT_ROOT / "fonts"),
+        name="fonts",
+    )
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:

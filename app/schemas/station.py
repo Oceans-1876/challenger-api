@@ -8,6 +8,7 @@ from geoalchemy2 import WKBElement
 from pydantic import BaseModel, Field, validator
 
 from app.schemas.species import SpeciesSummary
+from app.schemas import PaginationBase
 
 
 class StationBase(BaseModel):
@@ -28,6 +29,10 @@ class StationSummaryInDB(StationBase):
 
 class StationSummary(StationSummaryInDB):
     pass
+
+
+class StationSummaryPagination(PaginationBase):
+    results: List[StationSummary]
 
 
 class StationDetailsBase(StationBase):

@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import Optional, List, Union
 
 from pydantic import BaseModel, EmailStr
+from app.schemas import PaginationBase
 
 
 # Shared properties
@@ -32,6 +33,10 @@ class UserInDBBase(UserBase):
 # Additional properties to return via API
 class User(UserInDBBase):
     pass
+
+
+class UserPagination(PaginationBase):
+    results: List[User]
 
 
 # Additional properties stored in DB

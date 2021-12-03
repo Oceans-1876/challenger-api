@@ -3,13 +3,15 @@ from typing import Any, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
+from app import crud, models, schemas
 from app.api import deps
 
 router = APIRouter()
 
+MODEL = "data_source"
 
-@router.get("/", response_model=List[schemas.DataSourceSummary])
+
+@router.get("/", response_model=schemas.DataSourceSummaryPagination)
 def read_data_sources(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
@@ -37,6 +39,7 @@ def read_all_data_sources(
 def read_data_source_by_id(
     data_source_id: int,
     db: Session = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     """Get a data source by id."""
     data_source = crud.data_source.get(db, id=data_source_id)

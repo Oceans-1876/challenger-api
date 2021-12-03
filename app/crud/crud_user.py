@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.models import User
-from app.schemas import UserCreate, UserUpdate
+from app.schemas import UserCreate, UserUpdate, UserPagination
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+class CRUDUser(CRUDBase[User, UserCreate, UserUpdate, UserPagination]):
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
         """get_by_email function fetches a User from the
             Database based on their email.

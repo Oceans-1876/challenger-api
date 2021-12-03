@@ -2,9 +2,10 @@
 [Global Names](https://verifier.globalnames.org/data_sources).
 """
 from datetime import date  # noqa
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
+from app.schemas.pagination import PaginationBase
 
 
 class DataSourceBase(BaseModel):
@@ -19,6 +20,10 @@ class DataSourceSummaryInDB(DataSourceBase):
 
 class DataSourceSummary(DataSourceSummaryInDB):
     pass
+
+
+class DataSourceSummaryPagination(PaginationBase):
+    results: List[DataSourceSummary]
 
 
 class DataSourceDetailsBase(DataSourceBase):

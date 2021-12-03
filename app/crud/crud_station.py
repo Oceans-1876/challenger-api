@@ -4,10 +4,12 @@ from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
 from app.models import Station
-from app.schemas import StationCreate, StationUpdate
+from app.schemas import StationCreate, StationUpdate, StationSummaryPagination
 
 
-class CRUDStation(CRUDBase[Station, StationCreate, StationUpdate]):
+class CRUDStation(
+    CRUDBase[Station, StationCreate, StationUpdate, StationSummaryPagination]
+):
     def get(self, db: Session, id: Any) -> Optional[Station]:
         return db.query(self.model).filter(self.model.name == id).first()
 

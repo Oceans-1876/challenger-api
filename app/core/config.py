@@ -23,6 +23,9 @@ class Settings(BaseSettings):
 
     SERVER_HOST: AnyHttpUrl
 
+    # Debug Mode: if True Serves static files from the submodule present in the Dir
+    DEBUG: str
+
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:3000"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []

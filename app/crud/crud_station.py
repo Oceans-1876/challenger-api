@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
 from app.models import Station
-from app.schemas import StationCreate, StationUpdate, StationSummaryPagination
+from app.schemas import StationCreate, StationSummaryPagination, StationUpdate
 
 
 class CRUDStation(

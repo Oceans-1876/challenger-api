@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.crud.base import CRUDBase
 from app.models import DataSource, Species
-from app.schemas import DataSourceCreate, DataSourceUpdate, DataSourceSummaryPagination
+from app.schemas import DataSourceCreate, DataSourceSummaryPagination, DataSourceUpdate
 
 
 class CRUDDataSource(

@@ -19,8 +19,8 @@ from sqlalchemy.orm import Query, Session
 from sqlalchemy.sql.elements import BinaryExpression
 from sqlalchemy.sql.functions import _FunctionGenerator
 
-from app.db.base_class import Base
 from app.core.config import get_settings
+from app.db.base_class import Base
 from app.schemas import Expression, ExpressionGroup, Join
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -320,7 +320,6 @@ class CRUDBase(
         """
         query = self.order_by(db.query(self.model), order_by=order_by)
         data_from_db = query.offset(skip).limit(limit).all()
-        print(len(data_from_db))
         count = query.count()
         data = {
             "count": count,
@@ -346,7 +345,7 @@ class CRUDBase(
             ),
             "results": data_from_db,
         }
-        return data
+        return cast(PaginationSchemaType, data)
 
     def get_all(
         self, db: Session, *, order_by: Optional[List[str]] = None

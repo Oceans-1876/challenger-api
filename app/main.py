@@ -16,8 +16,7 @@ app = FastAPI(
     redoc_url=None,
 )
 
-if settings.DEBUG == "True":
-    print("Loading Font: ", settings.DEBUG)
+if settings.DEBUG:
     app.mount(
         "/fonts",
         StaticFiles(directory=PROJECT_ROOT / "fonts"),

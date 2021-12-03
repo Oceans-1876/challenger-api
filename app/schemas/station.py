@@ -7,8 +7,8 @@ from typing import Dict, List, Optional
 from geoalchemy2 import WKBElement
 from pydantic import BaseModel, Field, validator
 
-from app.schemas.species import SpeciesSummary
 from app.schemas import PaginationBase
+from app.schemas.species import SpeciesSummary
 
 
 class StationBase(BaseModel):

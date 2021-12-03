@@ -1,4 +1,3 @@
-from .pagination import PaginationBase
 from .data_source import (
     DataSourceCreate,
     DataSourceDetails,
@@ -7,6 +6,7 @@ from .data_source import (
     DataSourceUpdate,
 )
 from .msg import Msg
+from .pagination import PaginationBase
 from .search import Expression, ExpressionGroup, Join, Operator
 from .species import (
     SpeciesCreate,
@@ -21,9 +21,9 @@ from .station import (
     StationDetails,
     StationDetailsInDB,
     StationSummary,
-    StationSummaryPagination,
     StationSummaryInDB,
+    StationSummaryPagination,
     StationUpdate,
 )
 from .token import Token, TokenPayload
-from .user import User, UserCreate, UserInDB, UserUpdate, UserPagination
+from .user import User, UserCreate, UserInDB, UserPagination, UserUpdate

@@ -8,8 +8,6 @@ from app.api import deps
 
 router = APIRouter()
 
-MODEL = "data_source"
-
 
 @router.get("/", response_model=schemas.DataSourceSummaryPagination)
 def read_data_sources(

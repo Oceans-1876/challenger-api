@@ -117,7 +117,7 @@ def test_retrieve_users(
     crud.user.create(db, obj_in=user_in2)
 
     r = client.get(f"{settings.API_V1_STR}/users/", headers=superuser_token_headers)
-    all_users = r.json()
+    all_users = r.json()["results"]
 
     assert len(all_users) > 1
     for user in all_users:

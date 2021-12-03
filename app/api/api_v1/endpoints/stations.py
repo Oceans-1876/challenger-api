@@ -10,7 +10,7 @@ from app.models import stations_species_table
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.StationSummary])
+@router.get("/", response_model=schemas.StationSummaryPagination)
 def read_stations(
     db: Session = Depends(deps.get_db),
     skip: int = 0,

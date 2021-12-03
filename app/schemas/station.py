@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 from geoalchemy2 import WKBElement
 from pydantic import BaseModel, Field, validator
 
+from app.schemas import PaginationBase
 from app.schemas.species import SpeciesSummary
 
 
@@ -28,6 +29,10 @@ class StationSummaryInDB(StationBase):
 
 class StationSummary(StationSummaryInDB):
     pass
+
+
+class StationSummaryPagination(PaginationBase):
+    results: List[StationSummary]
 
 
 class StationDetailsBase(StationBase):

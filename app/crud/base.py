@@ -19,12 +19,25 @@ from sqlalchemy.orm import Query, Session
 from sqlalchemy.sql.elements import BinaryExpression
 from sqlalchemy.sql.functions import _FunctionGenerator
 
+from app.core.config import get_settings
 from app.db.base_class import Base
 from app.schemas import Expression, ExpressionGroup, Join
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+PaginationSchemaType = TypeVar("PaginationSchemaType", bound=BaseModel)
+
+settings = get_settings()  # Import App settings
+
+page_URI = f"{settings.SERVER_HOST}{settings.API_V1_STR}" + "/{}/?skip={}&limit={}"
+
+API_Model_mapping = {
+    "DataSource": "data_source",
+    "Species": "species",
+    "Station": "stations",
+    "User": "users",
+}
 
 
 class SearchExpressions(TypedDict):
@@ -32,7 +45,9 @@ class SearchExpressions(TypedDict):
     fuzzy_funcs: List[_FunctionGenerator]
 
 
-class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+class CRUDBase(
+    Generic[ModelType, CreateSchemaType, UpdateSchemaType, PaginationSchemaType]
+):
     """CRUD object with default methods to Create, Read, Update, Delete (CRUD)."""
 
     def __init__(self, model: Type[ModelType]):
@@ -165,6 +180,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 operator_func = getattr(column, f"__{expression.operator}__", None)
                 if not operator_func:
                     raise ValueError(f"Invalid operator: {expression.operator}")
+
                 search_expressions["clauses"].append(
                     operator_func(expression.search_term)
                 )
@@ -282,7 +298,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         skip: int = 0,
         limit: int = 100,
         order_by: Optional[List[str]] = None,
-    ) -> List[ModelType]:
+    ) -> PaginationSchemaType:
         """Get multiple records from the database.
 
         Parameters
@@ -303,7 +319,33 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             A list of SQLAlchemy model instances from the query.
         """
         query = self.order_by(db.query(self.model), order_by=order_by)
-        return query.offset(skip).limit(limit).all()
+        data_from_db = query.offset(skip).limit(limit).all()
+        count = query.count()
+        data = {
+            "count": count,
+            "first_page": page_URI.format(
+                API_Model_mapping[self.model.__name__], 0, limit
+            ),
+            "last_page": page_URI.format(
+                API_Model_mapping[self.model.__name__], max(0, count - limit), limit
+            ),
+            "previous_page": (
+                None
+                if (skip - limit) < 0
+                else page_URI.format(
+                    API_Model_mapping[self.model.__name__], (skip - limit), limit
+                )
+            ),
+            "next_page": (
+                None
+                if skip >= (count - limit)
+                else page_URI.format(
+                    API_Model_mapping[self.model.__name__], (skip + limit), limit
+                )
+            ),
+            "results": data_from_db,
+        }
+        return cast(PaginationSchemaType, data)
 
     def get_all(
         self, db: Session, *, order_by: Optional[List[str]] = None

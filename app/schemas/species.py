@@ -1,8 +1,10 @@
 """Pydantic models for representing species extracted by `challenger-workflows`.
 """
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
+
+from app.schemas import PaginationBase
 
 
 class SpeciesBase(BaseModel):
@@ -18,6 +20,10 @@ class SpeciesSummaryInDB(SpeciesBase):
 
 class SpeciesSummary(SpeciesSummaryInDB):
     pass
+
+
+class SpeciesSummaryPagination(PaginationBase):
+    results: List[SpeciesSummary]
 
 
 class SpeciesDetailsBase(SpeciesBase):

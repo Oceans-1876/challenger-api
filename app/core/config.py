@@ -23,6 +23,9 @@ class Settings(BaseSettings):
 
     SERVER_HOST: AnyHttpUrl
 
+    # Set DEBUG = False when in Production else can be set to True.
+    DEBUG: bool = False
+
     # BACKEND_CORS_ORIGINS is a JSON-formatted list of origins
     # e.g: '["http://localhost", "http://localhost:3000"]'
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []

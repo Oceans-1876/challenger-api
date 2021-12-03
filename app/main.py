@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -16,11 +16,12 @@ app = FastAPI(
     redoc_url=None,
 )
 
-app.mount(
-    "/fonts",
-    StaticFiles(directory=PROJECT_ROOT / "fonts"),
-    name="fonts",
-)
+if settings.DEBUG:
+    app.mount(
+        "/fonts",
+        StaticFiles(directory=PROJECT_ROOT / "fonts"),
+        name="fonts",
+    )
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
@@ -31,5 +32,6 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

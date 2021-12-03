@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -15,7 +15,7 @@ settings = get_settings()
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.User])
+@router.get("/", response_model=schemas.UserPagination)
 def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,

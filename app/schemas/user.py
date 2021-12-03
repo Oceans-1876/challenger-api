@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr
 from app.schemas import PaginationBase

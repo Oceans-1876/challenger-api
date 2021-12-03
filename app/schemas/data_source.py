@@ -1,11 +1,11 @@
 """Pydantic models for representing data sources used by
 [Global Names](https://verifier.globalnames.org/data_sources).
 """
+from app.schemas.pagination import PaginationBase
 from datetime import date  # noqa
 from typing import Optional, List
 
 from pydantic import BaseModel
-from app.schemas.pagination import PaginationBase
 
 
 class DataSourceBase(BaseModel):

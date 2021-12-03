@@ -21,7 +21,7 @@ from sqlalchemy.sql.functions import _FunctionGenerator
 
 from app.db.base_class import Base
 from app.core.config import get_settings
-from app.schemas import Expression, ExpressionGroup, Join, PaginationBase
+from app.schemas import Expression, ExpressionGroup, Join
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)

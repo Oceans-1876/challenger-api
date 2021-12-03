@@ -37,7 +37,6 @@ def read_all_data_sources(
 def read_data_source_by_id(
     data_source_id: int,
     db: Session = Depends(deps.get_db),
-    current_user: models.User = Depends(deps.get_current_user),
 ) -> Any:
     """Get a data source by id."""
     data_source = crud.data_source.get(db, id=data_source_id)

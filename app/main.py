@@ -34,10 +34,4 @@ if settings.BACKEND_CORS_ORIGINS:
     )
 
 
-@app.middleware("http")
-def test(request: Request, call_next):
-    print(request.client)
-    return call_next(request)
-
-
 app.include_router(api_router, prefix=settings.API_V1_STR)

@@ -1,6 +1,6 @@
-from typing import Generator
+from typing import Generator, Optional
 
-from fastapi import Security, Depends, HTTPException, status
+from fastapi import Security, Depends, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, APIKey
 from jose import jwt

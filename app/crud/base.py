@@ -263,11 +263,12 @@ class CRUDBase(
 
         if relations:
             for relation in relations:
-                query = query.join(relation)
+                query = query.join(relation, isouter=True)
 
         query = query.filter(*search_expressions["clauses"]).order_by(
             *map(lambda f: f.desc(), search_expressions["fuzzy_funcs"])
         )
+
         ordered_query = self.order_by(query, order_by=order_by)
 
         if limit > 0:

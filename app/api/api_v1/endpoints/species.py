@@ -47,7 +47,10 @@ def read_species_by_search(
     return species
 
 
-@router.get("/{species_id}", response_model=schemas.SpeciesDetails)
+@router.get(
+    "/{species_id}",
+    response_model=schemas.SpeciesDetails,
+)
 def read_species_by_id(
     species_id: str,
     db: Session = Depends(deps.get_db),

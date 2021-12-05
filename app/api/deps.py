@@ -1,8 +1,7 @@
 from typing import Generator, Optional
 
-from fastapi import Security, Depends, HTTPException, status, Header
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from fastapi.security.api_key import APIKeyQuery, APIKeyCookie, APIKeyHeader, APIKey
 from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session

@@ -117,14 +117,14 @@ class Data:
         logger.info("Importing species")
 
         for record_id, sp in self.species.items():
-            logger.info(f"Importing species: {sp['input']} ({record_id})")
+            logger.info(f"Importing species: {sp['name']} ({record_id})")
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
             data_source = self.data_sources[sp_data["dataSourceId"]]
 
             obj_in = {
-                "id": sp["inputId"],
+                "id": sp["id"],
                 "record_id": sp_data["recordId"],
                 "current_record_id": sp_data["currentRecordId"],
                 "matched_name": sp_data["matchedName"],
@@ -141,7 +141,7 @@ class Data:
                 "data_source_id": data_source.id,
             }
 
-            species = crud.species.get(self.db, sp["inputId"])
+            species = crud.species.get(self.db, sp["id"])
             if species:
                 crud.species.update(
                     self.db, obj_in=schemas.SpeciesUpdate(**obj_in), db_obj=species
@@ -213,7 +213,7 @@ class Data:
                 if sp.get("recordId") and sp["recordId"] not in station_species:
                     station_species.add(sp["recordId"])
                     species = crud.species.get(
-                        self.db, self.species[sp["recordId"]]["inputId"]
+                        self.db, self.species[sp["recordId"]]["id"]
                     )
                     if species:
                         station.species.append(species)

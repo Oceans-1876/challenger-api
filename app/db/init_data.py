@@ -11,6 +11,8 @@ from app.core.config import PROJECT_ROOT, get_settings
 from app.db import base  # noqa: F401
 from app.db.session import SessionLocal
 
+from pprint import pprint
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Data Import")
 
@@ -115,16 +117,17 @@ class Data:
 
     def import_species(self) -> None:
         logger.info("Importing species")
-
+        # pprint(self.species.items())
+        pprint(list(self.species.values())[0].keys())
         for record_id, sp in self.species.items():
-            logger.info(f"Importing species: {sp['name']} ({record_id})")
+            logger.info(f"Importing species: {sp['input']} ({record_id})")
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
             data_source = self.data_sources[sp_data["dataSourceId"]]
 
             obj_in = {
-                "id": sp["id"],
+                "id": sp["inputId"],
                 "record_id": sp_data["recordId"],
                 "current_record_id": sp_data["currentRecordId"],
                 "matched_name": sp_data["matchedName"],
@@ -141,7 +144,7 @@ class Data:
                 "data_source_id": data_source.id,
             }
 
-            species = crud.species.get(self.db, sp["id"])
+            species = crud.species.get(self.db, sp["inputId"])
             if species:
                 crud.species.update(
                     self.db, obj_in=schemas.SpeciesUpdate(**obj_in), db_obj=species

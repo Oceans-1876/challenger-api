@@ -116,8 +116,7 @@ class Data:
 
     def import_species(self) -> None:
         logger.info("Importing species")
-        # pprint(self.species.items())
-        pprint(list(self.species.values())[0].keys())
+
         for record_id, sp in self.species.items():
             logger.info(f"Importing species: {sp['input']} ({record_id})")
             sp_data = sp.get("bestResult")

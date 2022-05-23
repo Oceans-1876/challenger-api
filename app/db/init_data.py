@@ -4,14 +4,13 @@ import json
 import logging
 from datetime import datetime
 from functools import reduce
+from pprint import pprint
 from typing import Dict, List
 
 from app import crud, models, schemas
 from app.core.config import PROJECT_ROOT, get_settings
 from app.db import base  # noqa: F401
 from app.db.session import SessionLocal
-
-from pprint import pprint
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Data Import")

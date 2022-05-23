@@ -1,4 +1,4 @@
-### Set up
+# Set up
 
 - After cloning the repo, make sure to get both `data` and `fonts` submodules (`git submodule init` and `git submodule update`).
 - Make sure [Poetry](https://github.com/python-poetry/poetry) is available in your environment.
@@ -11,13 +11,13 @@
 - Run the dev server: `poetry run ./scripts/run_dev_server.sh`.
 - Run the dev email server: `poetry run ./scripts/run_dev_email_server.sh`.
 
-### Development
+## Development
 
 Before contributing to the code, make sure to install `pre-commit`: `pre-commit install`.
 
 > If you need to run the `pre-commit` checks before committing your changes, run `pre-commit run --all-files`.
 
-#### Database migrations
+### Database migrations
 
 Migrations are managed by `alembic`. All revisions are in `alembic/versions`.
 
@@ -27,7 +27,7 @@ To apply the new changes to an existing database, run `poetry run ./scripts/migr
 
 You can revert to a specific migration by running `poetry run ./scripts/migrations_reverse.sh <migration-id>`. You can find the ID for each migration in its file in `alembic/versions`.
 
-#### Scripts
+### Scripts
 
 | Script                  | Description                                                                                                                                                                |
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

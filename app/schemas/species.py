@@ -11,7 +11,7 @@ class SpeciesBase(BaseModel):
     id: str
     record_id: str
     matched_canonical_full_name: Optional[str] = None
-    current_name: str
+    current_name: Optional[str]
 
 
 class SpeciesSummaryInDB(SpeciesBase):

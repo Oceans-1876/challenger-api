@@ -48,7 +48,7 @@ def read_species_by_search(
 
 
 @router.post("/fuzzymatch/", response_model=List[schemas.SpeciesSummary])
-def read_species_by_search(
+def read_fuzzy_species_by_search(
     query_str: str,
     db: Session = Depends(deps.get_db),
     min_string_similarity_score: float = 0.3,
@@ -56,7 +56,7 @@ def read_species_by_search(
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:
 
-    expressions: dict = {
+    expressions_dict: dict = {
         "join": "OR",
         "expressions": [
             {
@@ -76,7 +76,7 @@ def read_species_by_search(
         ],
     }
 
-    expressions: schemas.ExpressionGroup = schemas.ExpressionGroup(**expressions)
+    expressions: schemas.ExpressionGroup = schemas.ExpressionGroup(**expressions_dict)
 
     """Retrieves the species based on the given search expressions."""
     species = crud.species.search(

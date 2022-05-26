@@ -7,7 +7,7 @@ from app.db.base_class import Base
 from app.models.station import stations_species_table
 
 if TYPE_CHECKING:
-    from app.models import DataSource, Station
+    from app.models import DataSource, Station, SpeciesExtension
 
 
 class Species(Base):
@@ -27,9 +27,13 @@ class Species(Base):
     classification_ranks: Optional[str] = Column(String(length=800))
     classification_ids: Optional[str] = Column(String(length=800))
     outlink: Optional[str] = Column(String(length=300))
+
     data_source_id: int = Column(Integer, ForeignKey("data_sources.id"), nullable=False)
 
     data_source: "DataSource" = relationship("DataSource", back_populates="species")
     stations: List["Station"] = relationship(
         "Station", back_populates="species", secondary=stations_species_table
+    )
+    species_extension: List["SpeciesExtension"] = relationship(
+        "SpeciesExtension", back_populates="species", cascade="all, delete"
     )

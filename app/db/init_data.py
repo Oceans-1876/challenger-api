@@ -97,7 +97,6 @@ class Data:
                 "id": data_source_data["id"],
                 "title": data_source_data["title"],
                 "title_short": data_source_data["title_short"],
-                "description": data_source_data.get("description"),
                 "curation": data_source_data["curation"],
                 "record_count": data_source_data.get("record_count"),
                 "updated_at": data_source_data["updated_at"],

@@ -6,11 +6,116 @@ from pydantic import BaseModel
 
 from app.schemas import PaginationBase
 
-from .common_names import SpeciesCommonNames
-from .species_extra import SpeciesExtraDetails
-from .synonyms import SpeciesSynonyms
+
+# Species Synonyms
+class SpeciesSynonymsBase(BaseModel):
+    id: str
+    scientific_name: Optional[str]
+    outlink: Optional[str]
+    species_id: str
 
 
+class SpeciesSynonymsCreate(SpeciesSynonymsBase):
+    pass
+
+
+class SpeciesSynonymsUpdate(SpeciesSynonymsBase):
+    pass
+
+
+class SpeciesSynonymsInDB(SpeciesSynonymsBase):
+    class Config:
+        orm_mode = True
+
+
+class SpeciesSynonyms(SpeciesSynonymsInDB):
+    pass
+
+
+class SpeciesSynonymsPagination(PaginationBase):
+    results: List[SpeciesSynonyms]
+
+
+# Species Common Names
+class SpeciesCommonNamesBase(BaseModel):
+    id: str
+    language: str
+    name: str
+    species_id: str
+
+
+class SpeciesCommonNamesCreate(SpeciesCommonNamesBase):
+    pass
+
+
+class SpeciesCommonNamesUpdate(SpeciesCommonNamesBase):
+    pass
+
+
+class SpeciesCommonNamesInDB(SpeciesCommonNamesBase):
+    class Config:
+        orm_mode = True
+
+
+class SpeciesCommonNames(SpeciesCommonNamesInDB):
+    pass
+
+
+class SpeciesCommonNamesPagination(PaginationBase):
+    results: List[SpeciesCommonNames]
+
+
+# Species Extra
+class SpeciesExtraBase(BaseModel):
+    id: str
+    scientific_name: Optional[str]
+    status: bool
+
+
+class SpeciesExtraSummaryInDB(SpeciesExtraBase):
+    class Config:
+        orm_mode = True
+
+
+class SpeciesExtraSummary(SpeciesExtraSummaryInDB):
+    pass
+
+
+class SpeciesExtraSummaryPagination(PaginationBase):
+    results: List[SpeciesExtraSummary]
+
+
+class SpeciesExtraDetailsBase(SpeciesExtraBase):
+    unaccepted_reason: Optional[str]
+    valid_name: Optional[str]
+    lsid: Optional[str]
+    isBrackish: bool
+    isExtinct: bool
+    isFreshwater: bool
+    isMarine: bool
+    isTerrestrial: bool
+
+    species_id: str
+
+
+class SpeciesExtraCreate(SpeciesExtraDetailsBase):
+    pass
+
+
+class SpeciesExtraUpdate(SpeciesExtraDetailsBase):
+    pass
+
+
+class SpeciesExtraDetailsInDB(SpeciesExtraDetailsBase):
+    class Config:
+        orm_mode = True
+
+
+class SpeciesExtraDetails(SpeciesExtraDetailsInDB):
+    pass
+
+
+# Species
 class SpeciesBase(BaseModel):
     id: str
     record_id: str

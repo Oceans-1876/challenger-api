@@ -29,7 +29,6 @@ class DataSourceSummaryPagination(PaginationBase):
 
 class DataSourceDetailsBase(DataSourceBase):
     title_short: str
-    description: Optional[str]
     curation: str
     record_count: Optional[int]
     updated_at: date

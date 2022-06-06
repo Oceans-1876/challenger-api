@@ -1,8 +1,3 @@
-from .common_names import (
-    SpeciesCommonNamesCreate,
-    SpeciesCommonNamesPagination,
-    SpeciesCommonNamesUpdate,
-)
 from .data_source import (
     DataSourceCreate,
     DataSourceDetails,
@@ -14,19 +9,23 @@ from .msg import Msg
 from .pagination import PaginationBase
 from .search import Expression, ExpressionGroup, Join, Operator
 from .species import (
+    SpeciesCommonNamesCreate,
+    SpeciesCommonNamesPagination,
+    SpeciesCommonNamesUpdate,
     SpeciesCreate,
     SpeciesDetails,
     SpeciesDetailsInDB,
-    SpeciesSummary,
-    SpeciesSummaryPagination,
-    SpeciesUpdate,
-)
-from .species_extra import (
     SpeciesExtraCreate,
     SpeciesExtraDetailsInDB,
     SpeciesExtraSummary,
     SpeciesExtraSummaryPagination,
     SpeciesExtraUpdate,
+    SpeciesSummary,
+    SpeciesSummaryPagination,
+    SpeciesSynonymsCreate,
+    SpeciesSynonymsPagination,
+    SpeciesSynonymsUpdate,
+    SpeciesUpdate,
 )
 from .station import (
     StationCreate,
@@ -36,11 +35,6 @@ from .station import (
     StationSummaryInDB,
     StationSummaryPagination,
     StationUpdate,
-)
-from .synonyms import (
-    SpeciesSynonymsCreate,
-    SpeciesSynonymsPagination,
-    SpeciesSynonymsUpdate,
 )
 from .token import Token, TokenPayload
 from .user import User, UserCreate, UserInDB, UserPagination, UserUpdate

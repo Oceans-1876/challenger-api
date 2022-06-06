@@ -1,19 +1,57 @@
 from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
 from app.models.station import stations_species_table
 
 if TYPE_CHECKING:
-    from app.models import (
-        DataSource,
-        SpeciesCommonNames,
-        SpeciesExtra,
-        SpeciesSynonyms,
-        Station,
-    )
+    from app.models import DataSource, Station
+
+
+class SpeciesExtra(Base):
+    __tablename__ = "species_extra"
+
+    id: str = Column(String(length=300), primary_key=True, index=True)
+    scientific_name: Optional[str] = Column(String(length=300), nullable=True)
+    status: bool = Column(Boolean, default=False)
+    unaccepted_reason: Optional[str] = Column(Text)
+    valid_name: Optional[str] = Column(String(length=300), nullable=False)
+    lsid: Optional[str] = Column(String(length=300), nullable=True)
+    isBrackish: bool = Column(Boolean, default=False)
+    isExtinct: bool = Column(Boolean, default=False)
+    isFreshwater: bool = Column(Boolean, default=False)
+    isMarine: bool = Column(Boolean, default=False)
+    isTerrestrial: bool = Column(Boolean, default=False)
+
+    species_id: str = Column(String, ForeignKey("species.id"), nullable=False)
+
+    species: "Species" = relationship("Species", back_populates="species_extra")
+
+
+class SpeciesCommonNames(Base):
+    __tablename__ = "species_common_names"
+
+    id: str = Column(String(length=300), primary_key=True, index=True)
+    language: str = Column(String(length=300), nullable=False)
+    name: str = Column(String(length=300), nullable=False)
+
+    species_id: str = Column(String, ForeignKey("species.id"), nullable=False)
+
+    species: "Species" = relationship("Species", back_populates="species_common_names")
+
+
+class SpeciesSynonyms(Base):
+    __tablename__ = "species_synonyms"
+
+    id: str = Column(String(length=300), primary_key=True, index=True)
+    scientific_name: Optional[str] = Column(String(length=300), nullable=True)
+    outlink: Optional[str] = Column(String(length=300))
+
+    species_id: str = Column(String, ForeignKey("species.id"), nullable=False)
+
+    species: "Species" = relationship("Species", back_populates="species_synonyms")
 
 
 class Species(Base):

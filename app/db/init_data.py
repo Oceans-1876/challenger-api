@@ -34,6 +34,10 @@ class Data:
             / "species.json"
         )
 
+        species_extra_path = (
+            PROJECT_ROOT / "data" / "Oceans1876" / "index_species_verified_extra.json"
+        )
+
         stations_path = (
             PROJECT_ROOT
             / "data"
@@ -47,10 +51,12 @@ class Data:
 
         with open(species_path, "r") as f:
             self.species = json.load(f)["species"]
+        with open(species_extra_path, "r") as f:
+            self.species_extra = json.load(f)["species"]
         with open(stations_path, "r") as f:
             self.stations = json.load(f)
         with open(data_sources_path, "r") as f:
-            self.data_sources_list = json.load(f)
+            self.data_sources_dict = json.load(f)
         with open(hathitrust_path, "r") as f:
             self.hathitrust_urls: Dict[str, str] = reduce(
                 lambda all_urls, section_props: all_urls.update(
@@ -85,20 +91,20 @@ class Data:
     def import_data_sources(self) -> None:
         logger.info("Importing data sources")
 
-        for data_source_data in self.data_sources_list:
+        for data_source_data in self.data_sources_dict.values():
             logger.info(f"Importing Data Source: {data_source_data['title']}")
 
             obj_in = {
                 "id": data_source_data["id"],
                 "title": data_source_data["title"],
-                "title_short": data_source_data["titleShort"],
+                "title_short": data_source_data["title_short"],
                 "description": data_source_data.get("description"),
                 "curation": data_source_data["curation"],
-                "record_count": data_source_data.get("recordCount"),
-                "updated_at": data_source_data["updatedAt"],
-                "is_out_link_ready": data_source_data["isOutlinkReady"],
-                "home_url": data_source_data.get("homeURL"),
-                "url_template": data_source_data.get("URL_template"),
+                "record_count": data_source_data.get("record_count"),
+                "updated_at": data_source_data["updated_at"],
+                "is_out_link_ready": data_source_data["is_outlink_ready"],
+                "home_url": data_source_data.get("home_url"),
+                "url_template": data_source_data.get("urls", {}).get("web"),
             }
 
             data_source = crud.data_source.get(self.db, data_source_data["id"])
@@ -118,14 +124,17 @@ class Data:
         logger.info("Importing species")
 
         for record_id, sp in self.species.items():
-            logger.info(f"Importing species: {sp['input']} ({record_id})")
+            logger.info(f"Importing species: {sp['name']} ({record_id})")
             sp_data = sp.get("bestResult")
             if not sp_data:
                 continue
             data_source = self.data_sources[sp_data["dataSourceId"]]
+            records = self.species_extra.get(record_id, {}).get("records", [])
+            synonyms = self.species_extra.get(record_id, {}).get("synonyms", [])
+            common_names = self.species_extra.get(record_id, {}).get("common_names", [])
 
             obj_in = {
-                "id": sp["inputId"],
+                "id": sp["id"],
                 "record_id": sp_data["recordId"],
                 "current_record_id": sp_data["currentRecordId"],
                 "matched_name": sp_data["matchedName"],
@@ -142,13 +151,95 @@ class Data:
                 "data_source_id": data_source.id,
             }
 
-            species = crud.species.get(self.db, sp["inputId"])
+            species = crud.species.get(self.db, sp["id"])
             if species:
-                crud.species.update(
+                inserted_sp = crud.species.update(
                     self.db, obj_in=schemas.SpeciesUpdate(**obj_in), db_obj=species
                 )
             else:
-                crud.species.create(self.db, obj_in=schemas.SpeciesCreate(**obj_in))
+                inserted_sp = crud.species.create(
+                    self.db, obj_in=schemas.SpeciesCreate(**obj_in)
+                )
+
+            for record in records:
+
+                sp_extra_in = {
+                    "id": str(record["id"]),
+                    "scientific_name": f"{record['scientificname']} {record['authority']}",
+                    "status": True if record["status"] == "accepted" else False,
+                    "unaccepted_reason": record["unacceptreason"],
+                    "valid_name": f"{record['valid_name']} {record['valid_authority']}",
+                    "lsid": record["lsid"],
+                    "isBrackish": record["isBrackish"]
+                    if record["isBrackish"] is not None
+                    else False,
+                    "isExtinct": record["isExtinct"]
+                    if record["isExtinct"] is not None
+                    else False,
+                    "isFreshwater": record["isFreshwater"]
+                    if record["isFreshwater"] is not None
+                    else False,
+                    "isMarine": record["isMarine"]
+                    if record["isMarine"] is not None
+                    else False,
+                    "isTerrestrial": record["isTerrestrial"]
+                    if record["isTerrestrial"] is not None
+                    else False,
+                    "species_id": inserted_sp.id,
+                }
+
+                species_ex = crud.species_extra.get(self.db, str(record["id"]))
+                if species_ex:
+                    crud.species_extra.update(
+                        self.db,
+                        obj_in=schemas.SpeciesExtraUpdate(**sp_extra_in),
+                        db_obj=species_ex,
+                    )
+                else:
+                    crud.species_extra.create(
+                        self.db, obj_in=schemas.SpeciesExtraCreate(**sp_extra_in)
+                    )
+
+            for syn in synonyms:
+                sp_syn_in = {
+                    "id": str(syn["id"]),
+                    "scientific_name": f"{syn['scientificname']} {syn['authority']}",
+                    "outlink": syn["url"],
+                    "species_id": inserted_sp.id,
+                }
+
+                species_syn = crud.species_synonyms.get(self.db, str(syn["id"]))
+                if species_syn:
+                    crud.species_synonyms.update(
+                        self.db,
+                        obj_in=schemas.SpeciesSynonymsUpdate(**sp_syn_in),
+                        db_obj=species_syn,
+                    )
+                else:
+                    crud.species_synonyms.create(
+                        self.db, obj_in=schemas.SpeciesSynonymsCreate(**sp_syn_in)
+                    )
+
+            for comm_name in common_names:
+                sp_comm_name_in = {
+                    "id": sp["id"],
+                    "language": comm_name["language"],
+                    "name": comm_name["vernacular"],
+                    "species_id": inserted_sp.id,
+                }
+
+                species_comm_name = crud.species_common_names.get(self.db, sp["id"])
+                if species_comm_name:
+                    crud.species_common_names.update(
+                        self.db,
+                        obj_in=schemas.SpeciesCommonNamesUpdate(**sp_comm_name_in),
+                        db_obj=species_comm_name,
+                    )
+                else:
+                    crud.species_common_names.create(
+                        self.db,
+                        obj_in=schemas.SpeciesCommonNamesCreate(**sp_comm_name_in),
+                    )
 
     def get_hathitrust_url(self, ranges: List[List[str]]) -> List[str]:
         urls = []

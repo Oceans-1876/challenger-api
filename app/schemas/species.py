@@ -5,6 +5,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from app.schemas import PaginationBase
+from .common_names import SpeciesCommonNames
+from .species_extra import SpeciesExtraDetails
+from .synonyms import SpeciesSynonyms
 
 
 class SpeciesBase(BaseModel):
@@ -51,6 +54,10 @@ class SpeciesUpdate(SpeciesDetailsBase):
 
 
 class SpeciesDetailsInDB(SpeciesDetailsBase):
+    species_extra: List[SpeciesExtraDetails]
+    species_synonyms: List[SpeciesSynonyms]
+    species_common_names: List[SpeciesCommonNames]
+
     class Config:
         orm_mode = True
 

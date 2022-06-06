@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.api import deps
 
+# from app.models import SpeciesCommonNames, SpeciesSynonyms # upcoming changes
+
 router = APIRouter()
 
 
@@ -73,10 +75,24 @@ def read_fuzzy_species_by_search(
                 "fuzzy": True,
                 "min_string_similarity": min_string_similarity_score,
             },
+            {
+                "column_name": "name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
+            {
+                "column_name": "scientific_name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
         ],
     }
 
-    expressions: schemas.ExpressionGroup = schemas.ExpressionGroup(**expressions_dict)
+    expressions = schemas.ExpressionGroup(**expressions_dict)
 
     """Retrieves the species based on the given search expressions."""
     species = crud.species.search(

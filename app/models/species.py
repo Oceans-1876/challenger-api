@@ -7,7 +7,13 @@ from app.db.base_class import Base
 from app.models.station import stations_species_table
 
 if TYPE_CHECKING:
-    from app.models import DataSource, Station, SpeciesExtension
+    from app.models import (
+        DataSource,
+        Station,
+        SpeciesExtra,
+        SpeciesSynonyms,
+        SpeciesCommonNames,
+    )
 
 
 class Species(Base):
@@ -34,6 +40,14 @@ class Species(Base):
     stations: List["Station"] = relationship(
         "Station", back_populates="species", secondary=stations_species_table
     )
-    species_extension: List["SpeciesExtension"] = relationship(
-        "SpeciesExtension", back_populates="species", cascade="all, delete"
+    species_extra: List["SpeciesExtra"] = relationship(
+        "SpeciesExtra", back_populates="species", cascade="all, delete"
+    )
+
+    species_synonyms: List["SpeciesSynonyms"] = relationship(
+        "SpeciesSynonyms", back_populates="species", cascade="all, delete"
+    )
+
+    species_common_names: List["SpeciesCommonNames"] = relationship(
+        "SpeciesCommonNames", back_populates="species", cascade="all, delete"
     )

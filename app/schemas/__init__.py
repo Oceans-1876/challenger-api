@@ -16,6 +16,23 @@ from .species import (
     SpeciesSummaryPagination,
     SpeciesUpdate,
 )
+from .species_extra import (
+    SpeciesExtraCreate,
+    SpeciesExtraDetailsInDB,
+    SpeciesExtraSummary,
+    SpeciesExtraUpdate,
+    SpeciesExtraSummaryPagination,
+)
+from .synonyms import (
+    SpeciesSynonymsCreate,
+    SpeciesSynonymsUpdate,
+    SpeciesSynonymsPagination,
+)
+from .common_names import (
+    SpeciesCommonNamesCreate,
+    SpeciesCommonNamesUpdate,
+    SpeciesCommonNamesPagination,
+)
 from .station import (
     StationCreate,
     StationDetails,

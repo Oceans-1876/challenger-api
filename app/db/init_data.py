@@ -29,7 +29,7 @@ class Data:
         species_path = (
             PROJECT_ROOT
             / "data"
-            / ("Oceans1876" if not test_mode else "Oceans1876_subset")
+            / ("Oceans1876" if not test_mode else "Oceans1876_test")
             / "species.json"
         )
 
@@ -40,7 +40,7 @@ class Data:
         stations_path = (
             PROJECT_ROOT
             / "data"
-            / ("Oceans1876" if not test_mode else "Oceans1876_subset")
+            / ("Oceans1876" if not test_mode else "Oceans1876_test")
             / "stations.json"
         )
 

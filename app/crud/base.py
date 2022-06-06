@@ -152,8 +152,6 @@ class CRUDBase(
                 has_column = False
                 if relations:
                     for relation in relations:
-                        print(relation.columns())
-                        print(expression.column_name)
                         try:
                             column = relation.c[expression.column_name]
                             has_column = True

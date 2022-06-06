@@ -9,10 +9,10 @@ from app.models.station import stations_species_table
 if TYPE_CHECKING:
     from app.models import (
         DataSource,
-        Station,
+        SpeciesCommonNames,
         SpeciesExtra,
         SpeciesSynonyms,
-        SpeciesCommonNames,
+        Station,
     )
 
 

@@ -1,3 +1,8 @@
+from .common_names import (
+    SpeciesCommonNamesCreate,
+    SpeciesCommonNamesPagination,
+    SpeciesCommonNamesUpdate,
+)
 from .data_source import (
     DataSourceCreate,
     DataSourceDetails,
@@ -20,18 +25,8 @@ from .species_extra import (
     SpeciesExtraCreate,
     SpeciesExtraDetailsInDB,
     SpeciesExtraSummary,
-    SpeciesExtraUpdate,
     SpeciesExtraSummaryPagination,
-)
-from .synonyms import (
-    SpeciesSynonymsCreate,
-    SpeciesSynonymsUpdate,
-    SpeciesSynonymsPagination,
-)
-from .common_names import (
-    SpeciesCommonNamesCreate,
-    SpeciesCommonNamesUpdate,
-    SpeciesCommonNamesPagination,
+    SpeciesExtraUpdate,
 )
 from .station import (
     StationCreate,
@@ -41,6 +36,11 @@ from .station import (
     StationSummaryInDB,
     StationSummaryPagination,
     StationUpdate,
+)
+from .synonyms import (
+    SpeciesSynonymsCreate,
+    SpeciesSynonymsPagination,
+    SpeciesSynonymsUpdate,
 )
 from .token import Token, TokenPayload
 from .user import User, UserCreate, UserInDB, UserPagination, UserUpdate

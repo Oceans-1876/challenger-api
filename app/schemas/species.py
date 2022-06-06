@@ -5,6 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from app.schemas import PaginationBase
+
 from .common_names import SpeciesCommonNames
 from .species_extra import SpeciesExtraDetails
 from .synonyms import SpeciesSynonyms

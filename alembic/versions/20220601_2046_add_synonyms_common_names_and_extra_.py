@@ -1,14 +1,14 @@
 """add synonyms, common names and extra species details
 
 Revision ID: 39287eb108c7
-Revises: 
+Revises:
 Create Date: 2022-06-01 20:46:46.952470+00:00
 
 """
-from alembic import op
 import sqlalchemy as sa
-import app
 
+import app
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "39287eb108c7"

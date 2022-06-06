@@ -1,7 +1,7 @@
+from .common_names import SpeciesCommonNames
 from .data_source import DataSource
 from .species import Species
-from .station import Station, stations_species_table
-from .user import User
 from .species_extra import SpeciesExtra
+from .station import Station, stations_species_table
 from .synonyms import SpeciesSynonyms
-from .common_names import SpeciesCommonNames
+from .user import User

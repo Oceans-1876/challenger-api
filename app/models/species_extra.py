@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import Column, ForeignKey, Text, String, Boolean
+from sqlalchemy import Boolean, Column, ForeignKey, String, Text
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base

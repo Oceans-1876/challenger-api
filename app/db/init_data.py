@@ -4,7 +4,6 @@ import json
 import logging
 from datetime import datetime
 from functools import reduce
-from pprint import pprint
 from typing import Dict, List
 
 from app import crud, models, schemas

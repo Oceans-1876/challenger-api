@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
-
-# from app.models import SpeciesCommonNames, SpeciesSynonyms # upcoming changes
+from app.models import SpeciesCommonNames  # upcoming changes
+from app.models import SpeciesSynonyms
 
 router = APIRouter()
 
@@ -49,7 +49,7 @@ def read_species_by_search(
     return species
 
 
-@router.post("/fuzzymatch/", response_model=List[schemas.SpeciesSummary])
+@router.post("/fuzzymatch/", response_model=List[schemas.SpeciesFuzzySummary])
 def read_fuzzy_species_by_search(
     query_str: str,
     db: Session = Depends(deps.get_db),
@@ -75,20 +75,20 @@ def read_fuzzy_species_by_search(
                 "fuzzy": True,
                 "min_string_similarity": min_string_similarity_score,
             },
-            # {
-            #     "column_name": "name",
-            #     "search_term": query_str,
-            #     "operator": "eq",
-            #     "fuzzy": True,
-            #     "min_string_similarity": min_string_similarity_score,
-            # },
-            # {
-            #     "column_name": "scientific_name",
-            #     "search_term": query_str,
-            #     "operator": "eq",
-            #     "fuzzy": True,
-            #     "min_string_similarity": min_string_similarity_score,
-            # },
+            {
+                "column_name": "name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
+            {
+                "column_name": "scientific_name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
         ],
     }
 
@@ -98,6 +98,7 @@ def read_fuzzy_species_by_search(
     species = crud.species.search(
         db,
         expressions=expressions,
+        relations=[SpeciesCommonNames, SpeciesSynonyms],
         order_by=order_by,
         limit=limit,
     )

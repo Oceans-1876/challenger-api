@@ -20,6 +20,7 @@ from .species import (
     SpeciesExtraSummary,
     SpeciesExtraSummaryPagination,
     SpeciesExtraUpdate,
+    SpeciesFuzzySummary,
     SpeciesSummary,
     SpeciesSummaryPagination,
     SpeciesSynonymsCreate,

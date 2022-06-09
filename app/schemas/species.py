@@ -132,6 +132,14 @@ class SpeciesSummary(SpeciesSummaryInDB):
     pass
 
 
+class SpeciesFuzzySummary(SpeciesSummaryInDB):
+    species_synonyms: List[SpeciesSynonyms]
+    species_common_names: List[SpeciesCommonNames]
+
+    class Config:
+        orm_mode = True
+
+
 class SpeciesSummaryPagination(PaginationBase):
     results: List[SpeciesSummary]
 

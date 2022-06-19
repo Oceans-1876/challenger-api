@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
+from app.models import SpeciesCommonNames  # upcoming changes
+from app.models import SpeciesSynonyms
 
 router = APIRouter()
 
@@ -41,6 +43,62 @@ def read_species_by_search(
     species = crud.species.search(
         db,
         expressions=expressions,
+        order_by=order_by,
+        limit=limit,
+    )
+    return species
+
+
+@router.post("/fuzzymatch/", response_model=List[schemas.SpeciesFuzzySummary])
+def read_fuzzy_species_by_search(
+    query_str: str,
+    db: Session = Depends(deps.get_db),
+    min_string_similarity_score: float = 0.3,
+    limit: int = 0,
+    order_by: Optional[List[str]] = Query(None),
+) -> Any:
+
+    expressions_dict: dict = {
+        "join": "OR",
+        "expressions": [
+            {
+                "column_name": "matched_canonical_full_name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
+            {
+                "column_name": "current_name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
+            {
+                "column_name": "name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
+            {
+                "column_name": "scientific_name",
+                "search_term": query_str,
+                "operator": "eq",
+                "fuzzy": True,
+                "min_string_similarity": min_string_similarity_score,
+            },
+        ],
+    }
+
+    expressions = schemas.ExpressionGroup(**expressions_dict)
+
+    """Retrieves the species based on the given search expressions."""
+    species = crud.species.search(
+        db,
+        expressions=expressions,
+        relations=[SpeciesCommonNames, SpeciesSynonyms],
         order_by=order_by,
         limit=limit,
     )

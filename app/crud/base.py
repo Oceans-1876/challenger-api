@@ -14,7 +14,7 @@ from typing import (
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import Column, Table, and_, asc, desc, func, or_
+from sqlalchemy import Column, and_, asc, desc, func, or_
 from sqlalchemy.orm import Query, Session
 from sqlalchemy.sql.elements import BinaryExpression
 from sqlalchemy.sql.functions import _FunctionGenerator
@@ -102,7 +102,7 @@ class CRUDBase(
         self,
         expressions: Union[Expression, ExpressionGroup],
         *,
-        relations: Optional[List[Table]] = None,
+        relations: Optional[List[Any]] = None,
     ) -> SearchExpressions:
         """Create SQLAlchemy search expressions from the given Expression or
         ExpressionGroup.
@@ -156,7 +156,9 @@ class CRUDBase(
                             column = relation.c[expression.column_name]
                             has_column = True
                         except AttributeError:
-                            pass
+                            column = getattr(relation, expression.column_name, None)
+                            if column is not None:
+                                has_column = True
                         if has_column:
                             break
                 if not has_column:
@@ -192,7 +194,7 @@ class CRUDBase(
         db: Session,
         expressions: Union[Expression, ExpressionGroup],
         *,
-        relations: Optional[List[Table]] = None,
+        relations: Optional[List[Any]] = None,
         order_by: Optional[List[str]] = None,
         limit: int = 0,
     ) -> List[ModelType]:

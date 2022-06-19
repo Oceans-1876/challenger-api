@@ -9,11 +9,23 @@ from .msg import Msg
 from .pagination import PaginationBase
 from .search import Expression, ExpressionGroup, Join, Operator
 from .species import (
+    SpeciesCommonNamesCreate,
+    SpeciesCommonNamesPagination,
+    SpeciesCommonNamesUpdate,
     SpeciesCreate,
     SpeciesDetails,
     SpeciesDetailsInDB,
+    SpeciesExtraCreate,
+    SpeciesExtraDetailsInDB,
+    SpeciesExtraSummary,
+    SpeciesExtraSummaryPagination,
+    SpeciesExtraUpdate,
+    SpeciesFuzzySummary,
     SpeciesSummary,
     SpeciesSummaryPagination,
+    SpeciesSynonymsCreate,
+    SpeciesSynonymsPagination,
+    SpeciesSynonymsUpdate,
     SpeciesUpdate,
 )
 from .station import (

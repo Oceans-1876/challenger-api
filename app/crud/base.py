@@ -102,7 +102,7 @@ class CRUDBase(
         self,
         expressions: Union[Expression, ExpressionGroup],
         *,
-        relations: Optional[List[Any]] = None,
+        relations: Optional[List[Any]] = None,  # TODO change to Union Type
     ) -> SearchExpressions:
         """Create SQLAlchemy search expressions from the given Expression or
         ExpressionGroup.
@@ -169,6 +169,7 @@ class CRUDBase(
 
             if column.type.python_type == str and expression.fuzzy:  # type: ignore
                 similarity_func = func.similarity(column, expression.search_term)
+                # similarity_func = func.levenshtein(column, expression.search_term)
                 search_expressions["clauses"].append(
                     cast(
                         BinaryExpression,
@@ -269,6 +270,7 @@ class CRUDBase(
 
         query = query.filter(*search_expressions["clauses"]).order_by(
             *map(lambda f: f.desc(), search_expressions["fuzzy_funcs"])
+            # *map(lambda f: f.asc(), search_expressions["fuzzy_funcs"])
         )
 
         ordered_query = self.order_by(query, order_by=order_by)

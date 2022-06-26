@@ -1,7 +1,8 @@
 #! /usr/bin/env bash
 
-set -x
+set -e
 
-export PYTHONPATH=$PWD
+PROJECT_ROOT=$(dirname $(dirname $(realpath $0)))
+export PYTHONPATH=$PROJECT_ROOT
 
-alembic revision --autogenerate -m "${@}"
+alembic-autogen-check || alembic revision --autogenerate -m "${@}"

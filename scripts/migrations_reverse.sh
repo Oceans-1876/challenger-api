@@ -1,6 +1,9 @@
 #! /usr/bin/env bash
 
-export PYTHONPATH=$PWD
+set -e
+
+PROJECT_ROOT=$(dirname $(dirname $(realpath $0)))
+export PYTHONPATH=$PROJECT_ROOT
 
 if [[ -z "$1" ]]; then
   echo "Specify the revision to reverse to."

@@ -1,4 +1,5 @@
 #! /usr/bin/env bash
+
 set -e
 
 export PYTHON_TEST=true
@@ -13,6 +14,6 @@ echo "CREATE EXTENSION pg_trgm" | psql -d "$POSTGRES_TEST_DB"
 
 bash scripts/migrations_forward.sh
 
-bash scripts/import_data.sh
+bash scripts/import_data.sh -t
 
 pytest app/tests "${@}"

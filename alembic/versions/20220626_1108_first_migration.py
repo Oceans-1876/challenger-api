@@ -1,17 +1,17 @@
-"""add synonyms, common names and extra species details
+"""First migration
 
-Revision ID: 39287eb108c7
+Revision ID: f9a133b33db1
 Revises:
-Create Date: 2022-06-01 20:46:46.952470+00:00
+Create Date: 2022-06-26 11:08:18.415909+00:00
 
 """
 import sqlalchemy as sa
 
-import app
 from alembic import op
+from app.utils.db import Geometry
 
 # revision identifiers, used by Alembic.
-revision = "39287eb108c7"
+revision = "f9a133b33db1"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,6 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("title", sa.String(length=150), nullable=False),
         sa.Column("title_short", sa.String(length=150), nullable=False),
-        sa.Column("description", sa.Text(), nullable=True),
         sa.Column("curation", sa.String(length=90), nullable=False),
         sa.Column("record_count", sa.Integer(), nullable=True),
         sa.Column("updated_at", sa.Date(), nullable=False),
@@ -37,6 +36,7 @@ def upgrade():
     op.create_index(
         op.f("ix_data_sources_title"), "data_sources", ["title"], unique=False
     )
+
     op.create_table(
         "stations",
         sa.Column("name", sa.String(length=20), nullable=False),
@@ -44,7 +44,7 @@ def upgrade():
         sa.Column("sediment_sample", sa.String(length=50), nullable=True),
         sa.Column(
             "coordinates",
-            app.utils.db.Geometry(
+            Geometry(
                 geometry_type="POINT",
                 srid=4326,
                 from_text="ST_GeomFromEWKT",
@@ -139,7 +139,7 @@ def upgrade():
         sa.Column("id", sa.String(length=300), nullable=False),
         sa.Column("scientific_name", sa.String(length=300), nullable=True),
         sa.Column("status", sa.Boolean(), nullable=True),
-        sa.Column("unaccepted_reason", sa.String(length=200), nullable=True),
+        sa.Column("unaccepted_reason", sa.Text(), nullable=True),
         sa.Column("valid_name", sa.String(length=300), nullable=False),
         sa.Column("lsid", sa.String(length=300), nullable=True),
         sa.Column("isBrackish", sa.Boolean(), nullable=True),
@@ -205,6 +205,12 @@ def downgrade():
     op.drop_index(op.f("ix_users_email"), table_name="users")
     op.drop_table("users")
     op.drop_index(op.f("ix_stations_name"), table_name="stations")
+    op.drop_index(
+        "idx_stations_coordinates",
+        table_name="stations",
+        postgresql_using="gist",
+        postgresql_ops={},
+    )
     op.drop_table("stations")
     op.drop_index(op.f("ix_data_sources_title"), table_name="data_sources")
     op.drop_index(op.f("ix_data_sources_id"), table_name="data_sources")

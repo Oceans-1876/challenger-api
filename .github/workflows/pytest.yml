@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Run the job in this container
-    container: python:3.9-bullseye
+    container: python:3.10-bullseye
 
     env:
       POSTGRES_SERVER: postgres

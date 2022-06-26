@@ -1,13 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import (
-    data_sources,
-    login,
-    species,
-    stations,
-    users,
-    utils,
-)
+from .endpoints import data_sources, login, species, stations, users, utils
 
 # Add all the API endpoints from the endpoints folder
 api_router = APIRouter()

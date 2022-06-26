@@ -5,8 +5,7 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
-from app.models import SpeciesCommonNames  # upcoming changes
-from app.models import SpeciesSynonyms
+from app.models import SpeciesCommonNames, SpeciesSynonyms
 
 router = APIRouter()
 

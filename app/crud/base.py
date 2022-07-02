@@ -14,7 +14,7 @@ from typing import (
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import Column, and_, asc, desc, func, or_
+from sqlalchemy import Column, Table, and_, asc, desc, func, or_
 from sqlalchemy.orm import Query, Session
 from sqlalchemy.sql.elements import BinaryExpression
 from sqlalchemy.sql.functions import _FunctionGenerator
@@ -28,7 +28,7 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 PaginationSchemaType = TypeVar("PaginationSchemaType", bound=BaseModel)
 
-settings = get_settings()  # Import App settings
+settings = get_settings()
 
 page_URI = f"{settings.SERVER_HOST}{settings.API_V1_STR}" + "/{}/?skip={}&limit={}"
 
@@ -102,7 +102,7 @@ class CRUDBase(
         self,
         expressions: Union[Expression, ExpressionGroup],
         *,
-        relations: Optional[List[Any]] = None,  # TODO change to Union Type
+        relations: Optional[List[Union[Type[Base], Table]]] = None,
     ) -> SearchExpressions:
         """Create SQLAlchemy search expressions from the given Expression or
         ExpressionGroup.
@@ -114,7 +114,7 @@ class CRUDBase(
         ----------
         expressions : Union[Expression, ExpressionGroup]
             The search expressions. See the `search` method for an example.
-        relations : Optional[List[Table]]
+        relations : Optional[List[Union[Type[Base], Table]]]
             The relations to use for discovering columns.
 
         Returns
@@ -152,10 +152,10 @@ class CRUDBase(
                 has_column = False
                 if relations:
                     for relation in relations:
-                        try:
+                        if isinstance(relation, Table):
                             column = relation.c[expression.column_name]
                             has_column = True
-                        except AttributeError:
+                        else:
                             column = getattr(relation, expression.column_name, None)
                             if column is not None:
                                 has_column = True
@@ -195,7 +195,7 @@ class CRUDBase(
         db: Session,
         expressions: Union[Expression, ExpressionGroup],
         *,
-        relations: Optional[List[Any]] = None,
+        relations: Optional[List[Union[Type[Base], Table]]] = None,
         order_by: Optional[List[str]] = None,
         limit: int = 0,
     ) -> List[ModelType]:
@@ -240,7 +240,7 @@ class CRUDBase(
             The database session.
         expressions : Union[Expression, ExpressionGroup]
             The search expressions.
-        relations : Optional[List[Table]]
+        relations : Optional[List[Union[Type[Base], Table]]]
             The relations to be joined in the search.
         order_by : Optional[List[str]]
             List of column names to order by. If a column name is prefixed with '-',

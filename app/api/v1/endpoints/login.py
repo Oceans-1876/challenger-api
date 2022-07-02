@@ -13,7 +13,7 @@ from app.core.security import get_password_hash
 from app.utils.auth import generate_password_reset_token, verify_password_reset_token
 from app.utils.email import send_reset_password_email
 
-settings = get_settings()  # Import App settings
+settings = get_settings()
 
 router = APIRouter()
 

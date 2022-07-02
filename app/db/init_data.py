@@ -17,7 +17,7 @@ logger = logging.getLogger("Data Import")
 settings = get_settings()
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--testing", type=bool, default=False)
+parser.add_argument("--testing", action="store_true")
 args = parser.parse_args()
 
 

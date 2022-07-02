@@ -1,5 +1,4 @@
 from app.crud.base import CRUDBase
-# Species
 from app.models import Species, SpeciesCommonNames, SpeciesExtra, SpeciesSynonyms
 from app.schemas import (
     SpeciesCommonNamesCreate,

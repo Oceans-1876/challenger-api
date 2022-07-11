@@ -169,6 +169,7 @@ class CRUDBase(
 
             if column.type.python_type == str and expression.fuzzy:  # type: ignore
                 similarity_func = func.similarity(column, expression.search_term)
+                # TODO: find a better searching function in database.
                 # similarity_func = func.levenshtein(column, expression.search_term)
                 search_expressions["clauses"].append(
                     cast(

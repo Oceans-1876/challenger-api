@@ -48,11 +48,11 @@ def read_species_by_search(
     return species
 
 
-@router.post("/fuzzymatch/", response_model=List[schemas.SpeciesFuzzySummary])
+@router.get("/fuzzymatch/", response_model=List[schemas.SpeciesSummary])
 def read_fuzzy_species_by_search(
     query_str: str,
     db: Session = Depends(deps.get_db),
-    min_string_similarity_score: float = 0.3,
+    min_string_similarity_score: float = 0.2,
     limit: int = 0,
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:

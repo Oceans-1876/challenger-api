@@ -71,4 +71,4 @@ jobs:
       - name: Deploy docker container webhook
         uses: joelwmale/webhook-action@master
         env:
-          WEBHOOK_URL: https://oceans1876-dev.ncsa.illinois.edu/hooks/redeploy
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL_DEV  }}

@@ -3,6 +3,11 @@ name: Build and publish the API docker image on Github Container Registry
 on:
   workflow_dispatch:
 
+  push:
+    branches:
+      - main
+      - develop
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -57,3 +62,13 @@ jobs:
           tags: "${{ env.TAGS }}"
           buildargs: BRANCH,BUILDNUMBER,GITSHA1
           dockerfile: docker/Dockerfile
+  
+  redeploy:
+    name: Redeploy API - Webhook call
+    runs-on: ubuntu-18.04
+    needs: [docker]
+    steps:
+      - name: Deploy docker container webhook
+        uses: joelwmale/webhook-action@master
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL_DEV  }}

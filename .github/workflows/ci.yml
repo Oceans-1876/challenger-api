@@ -64,11 +64,12 @@ jobs:
           dockerfile: docker/Dockerfile
   
   redeploy:
-    name: Redeploy API - Webhook call
+    name: Redeploy Portal - Webhook call
     runs-on: ubuntu-18.04
     needs: [docker]
     steps:
       - name: Deploy docker container webhook
         uses: joelwmale/webhook-action@master
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL_DEV  }}
+        with:
+          url: ${{ secrets.WEBHOOK_URL_DEV  }}
+          headers: '{"X-Hub-Signature": "${{ secrets.WEBHOOK_SECRET_DEV }}"}'

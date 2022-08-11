@@ -62,7 +62,7 @@ jobs:
           tags: "${{ env.TAGS }}"
           buildargs: BRANCH,BUILDNUMBER,GITSHA1
           dockerfile: docker/Dockerfile
-  
+
   redeploy:
     name: Redeploy Portal - Webhook call
     runs-on: ubuntu-18.04

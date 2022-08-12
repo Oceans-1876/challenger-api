@@ -1,0 +1,6 @@
+[submodule "data"]
+	path = data
+	url = git@github.com:Oceans-1876/challenger-data.git
+[submodule "fonts"]
+	path = fonts
+	url = git@github.com:Oceans-1876/maplibre-glyphs.git

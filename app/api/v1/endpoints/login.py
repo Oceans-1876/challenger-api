@@ -22,8 +22,27 @@ router = APIRouter()
 def login_access_token(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    """
-    OAuth2 compatible token login, get an access token for future requests
+    """login_access_token: OAuth2 compatible token login,
+        get an access token for future requests
+
+    Parameters
+    ----------
+    db : Session
+         The database session, by default Depends(deps.get_db)
+    form_data : OAuth2PasswordRequestForm, optional
+        Object to hold the data from a form coming from the user,
+        by default Depends()
+
+    Returns
+    -------
+    Any
+       Returns an Access Bearer token.
+
+    Raises
+    ------
+    HTTPException
+        Raised when the user has entered an incorrect email/password
+        or when an inactive User tries to authenticate.
     """
     user = crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
@@ -43,16 +62,42 @@ def login_access_token(
 
 @router.post("/login/test-token", response_model=schemas.User)
 def test_token(current_user: models.User = Depends(deps.get_current_user)) -> Any:
-    """
-    Test access token
+    """test_token to test access token.
+
+    Parameters
+    ----------
+    current_user : models.User, optional
+        Instance of the User who is currently logged in,
+        by default Depends(deps.get_current_user)
+
+    Returns
+    -------
+    Any
+        Returns the current logged in user.
     """
     return current_user
 
 
 @router.post("/password-recovery/{email}", response_model=schemas.Msg)
 def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
-    """
-    Password Recovery
+    """recover_password: Password Recovery
+
+    Parameters
+    ----------
+    email : str
+        email of the User.
+    db : Session
+        The database session, by default Depends(deps.get_db)
+
+    Returns
+    -------
+    Any
+        Message confirmation for password Recovery.
+
+    Raises
+    ------
+    HTTPException
+        Raised when email fetching from database fails.
     """
     user = crud.user.get_by_email(db, email=email)
 
@@ -74,8 +119,27 @@ def reset_password(
     new_password: str = Body(...),
     db: Session = Depends(deps.get_db),
 ) -> Any:
-    """
-    Reset password
+    """reset_password: Reset password
+
+    Parameters
+    ----------
+    token : str
+        User token generated before, by default Body(...)
+    new_password : str
+        New user entered password, by default Body(...)
+    db : Session
+        The database session, by default Depends(deps.get_db)
+
+    Returns
+    -------
+    Any
+        Message confirmation for password reset.
+
+    Raises
+    ------
+    HTTPException
+        Raised when an invalid token is provided, the user
+        is not found in the system or the user is inactive.
     """
     email = verify_password_reset_token(token)
     if not email:

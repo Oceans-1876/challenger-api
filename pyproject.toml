@@ -5,33 +5,36 @@ description = ""
 authors = ["Kaveh Karimi <kaveh@illinois.edu>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-uvicorn = "^0.14"
-fastapi = "^0.68"
-passlib = {extras = ["bcrypt"], version = "^1.7"}
-tenacity = "^8.0"
-pydantic = {extras = ["dotenv", "email"], version = "^1.8.2"}
-emails = "^0.6"
-raven = "^6.10"
-gunicorn = "^20.1"
-jinja2 = "^3.0"
-psycopg2-binary = "^2.9"
-alembic = "^1.6"
-sqlalchemy = "^1.4"
-python-jose = {extras = ["cryptography"], version = "^3.3"}
-python-multipart = "^0.0.5"
-GeoAlchemy2 = "^0.9.3"
+python = "~3.10"
+uvicorn = "~0.18"
+fastapi = "~0.78"
+passlib = {extras = ["bcrypt"], version = "~1.7"}
+tenacity = "~8.0"
+pydantic = {extras = ["dotenv", "email"], version = "~1.9"}
+emails = "~0.6"
+raven = "~6.10"
+gunicorn = "~20.1"
+jinja2 = "~3.1"
+psycopg2-binary = "~2.9"
+alembic = "~1.8"
+sqlalchemy = "~1.4"
+python-jose = {extras = ["cryptography"], version = "~3.3"}
+python-multipart = "~0.0"
+GeoAlchemy2 = "~0.12"
+SQLAlchemy = {extras = ["mypy"], version = "~1.4"}
+aiofiles = "~0.8"
 
 [tool.poetry.dev-dependencies]
-mypy = "^0.910"
-black = "^21.7b0"
-isort = "^5.9"
-autoflake = "^1.4"
-flake8 = "^3.9"
-pytest = "^6.2"
-sqlalchemy-stubs = "^0.4"
-pytest-cov = "^2.12"
-pre-commit = "^2.14.0"
+mypy = "~0.961"
+black = "~22.3"
+isort = "~5.10"
+autoflake = "~1.4"
+flake8 = "~4.0"
+pytest = "~7.1"
+pytest-cov = "~3.0"
+pre-commit = "~2.19"
+sqlalchemy2-stubs = "~0.0.2a24"
+alembic-autogen-check = "^1.1.1"
 
 [tool.isort]
 multi_line_output = 3

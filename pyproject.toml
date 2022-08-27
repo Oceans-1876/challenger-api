@@ -7,7 +7,7 @@ authors = ["Kaveh Karimi <kaveh@illinois.edu>"]
 [tool.poetry.dependencies]
 python = "~3.10"
 uvicorn = "~0.18"
-fastapi = "~0.78"
+fastapi = "~0.79"
 passlib = {extras = ["bcrypt"], version = "~1.7"}
 tenacity = "~8.0"
 pydantic = {extras = ["dotenv", "email"], version = "~1.9"}
@@ -25,14 +25,14 @@ SQLAlchemy = {extras = ["mypy"], version = "~1.4"}
 aiofiles = "~0.8"
 
 [tool.poetry.dev-dependencies]
-mypy = "~0.961"
-black = "~22.3"
+mypy = "~0.971"
+black = "~22.6"
 isort = "~5.10"
 autoflake = "~1.4"
-flake8 = "~4.0"
+flake8 = "~5.0"
 pytest = "~7.1"
 pytest-cov = "~3.0"
-pre-commit = "~2.19"
+pre-commit = "~2.20"
 sqlalchemy2-stubs = "~0.0.2a24"
 alembic-autogen-check = "^1.1.1"
 

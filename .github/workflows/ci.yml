@@ -65,18 +65,19 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    env:
-      BRANCH: ${{ env.GITHUB_BRANCH }}
-    if: env.GITHUB_BRANCH == 'main' || env.GITHUB_BRANCH == 'develop'
     steps:
       - name: Deploy to prod server
         uses: joelwmale/webhook-action@master
+        env:
+          BRANCH: ${{ env.GITHUB_BRANCH }}
         if: env.GITHUB_BRANCH == 'main'
         with:
           url: ${{ secrets.WEBHOOK_URL_PROD }}
           headers: '{"X-Hub-Signature": "${{ secrets.WEBHOOK_SECRET_PROD }}"}'
       - name: Deploy dev server
         uses: joelwmale/webhook-action@master
+        env:
+          BRANCH: ${{ env.GITHUB_BRANCH }}
         if: env.GITHUB_BRANCH == 'develop'
         with:
           url: ${{ secrets.WEBHOOK_URL_DEV }}

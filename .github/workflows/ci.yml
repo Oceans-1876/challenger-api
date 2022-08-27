@@ -63,9 +63,6 @@ jobs:
           buildargs: BRANCH,BUILDNUMBER,GITSHA1
           dockerfile: docker/Dockerfile
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to prod server
         uses: joelwmale/webhook-action@master
         env:
@@ -74,6 +71,7 @@ jobs:
         with:
           url: ${{ secrets.WEBHOOK_URL_PROD }}
           headers: '{"X-Hub-Signature": "${{ secrets.WEBHOOK_SECRET_PROD }}"}'
+
       - name: Deploy dev server
         uses: joelwmale/webhook-action@master
         env:

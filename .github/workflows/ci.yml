@@ -63,13 +63,21 @@ jobs:
           buildargs: BRANCH,BUILDNUMBER,GITSHA1
           dockerfile: docker/Dockerfile
 
-  redeploy:
-    name: Redeploy Portal - Webhook call
-    runs-on: ubuntu-18.04
-    needs: [docker]
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: ${{ env.GITHUB_BRANCH }}
+    if: env.GITHUB_BRANCH == 'main' || env.GITHUB_BRANCH == 'develop'
     steps:
-      - name: Deploy docker container webhook
+      - name: Deploy to prod server
         uses: joelwmale/webhook-action@master
+        if: env.GITHUB_BRANCH == 'main'
         with:
-          url: ${{ secrets.WEBHOOK_URL_DEV  }}
+          url: ${{ secrets.WEBHOOK_URL_PROD }}
+          headers: '{"X-Hub-Signature": "${{ secrets.WEBHOOK_SECRET_PROD }}"}'
+      - name: Deploy dev server
+        uses: joelwmale/webhook-action@master
+        if: env.GITHUB_BRANCH == 'develop'
+        with:
+          url: ${{ secrets.WEBHOOK_URL_DEV }}
           headers: '{"X-Hub-Signature": "${{ secrets.WEBHOOK_SECRET_DEV }}"}'

@@ -1,4 +1,4 @@
-name: Perfrom Type and Formatting checks on a new/edited pull requests.
+name: Perform Type and Formatting checks on a new/edited pull requests.
 
 on:
   workflow_dispatch:

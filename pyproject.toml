@@ -3,6 +3,7 @@ name = "oceans-1876-api"
 version = "0.1.0"
 description = ""
 authors = ["Kaveh Karimi <kaveh@illinois.edu>"]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "~3.10"

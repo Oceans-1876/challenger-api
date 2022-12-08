@@ -36,7 +36,7 @@ def include_name(name, type_, parent_names):
     not presented by a model in the API:
         - spatial_ref_sys
     """
-    return type_ != "table" or name != "spatial_ref_sys"
+    return name != "spatial_ref_sys"
 
 
 def run_migrations_offline():

@@ -1,22 +1,34 @@
 import os
-import secrets
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, PostgresDsn, validator
+from pydantic import (
+    AnyHttpUrl,
+    BaseSettings,
+    EmailStr,
+    Field,
+    HttpUrl,
+    PostgresDsn,
+    validator,
+)
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent
+from app import PROJECT_ROOT
 
 
 class Settings(BaseSettings):
-    """Settings is class to hold all the configuration information about the server"""
+    """
+    API config
 
-    PROJECT_NAME: str
-    SERVER_NAME: str
+    All attributes of this class can be set in the `.env` file in the project root,
+    unless they are set as a `const` fields.
+    """
+
+    PROJECT_NAME: str = Field("Challenger Expedition", const=True)
+    SERVER_NAME: str = Field("Challenger Expedition API", const=True)
     API_V1_STR: str = "/api/v1"
 
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: str
 
     # 60 minutes * 24 hours * 8 days = 8 days
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
@@ -50,7 +62,7 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
-    POSTGRES_TEST_DB: str = "tests_oceans1876"
+    POSTGRES_TEST_DB: str = "tests_challenger_expedition"
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
@@ -65,6 +77,8 @@ class Settings(BaseSettings):
             host=values.get("POSTGRES_SERVER"),
             path=f"/{db_name}",
         )
+
+    ENABLE_AUTH: bool = False
 
     SMTP_TLS: bool = True
     SMTP_PORT: Optional[int] = None
@@ -93,8 +107,21 @@ class Settings(BaseSettings):
         )
 
     EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
-    FIRST_SUPERUSER: EmailStr
-    FIRST_SUPERUSER_PASSWORD: str
+    FIRST_SUPERUSER: Optional[EmailStr] = None
+    FIRST_SUPERUSER_PASSWORD: Optional[str] = None
+
+    @validator("FIRST_SUPERUSER", pre=True)
+    def get_superuser(cls, v: Optional[str]) -> Optional[str]:
+        if os.environ.get("PYTHON_TEST"):
+            return "test@example.com"
+        return v
+
+    @validator("FIRST_SUPERUSER_PASSWORD", pre=True)
+    def get_superuser_password(cls, v: Optional[str]) -> Optional[str]:
+        if os.environ.get("PYTHON_TEST"):
+            return "test"
+        return v
+
     USERS_OPEN_REGISTRATION: bool = False
 
     class Config:
@@ -104,4 +131,4 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    return Settings(PROJECT_NAME="Oceans 1876", SERVER_NAME="Oceans 1876 API")
+    return Settings()

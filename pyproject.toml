@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "oceans-1876-api"
+name = "challenger-expedition-api"
 version = "0.1.0"
 description = ""
 authors = ["Kaveh Karimi <kaveh@illinois.edu>"]
@@ -13,6 +13,7 @@ emails = "~0.6"
 fastapi = "~0.88"
 GeoAlchemy2 = "~0.12"
 gunicorn = "~20.1"
+httpx = "~0.23"
 jinja2 = "~3.1"
 passlib = { extras = ["bcrypt"], version = "~1.7" }
 psycopg2-binary = "~2.9"

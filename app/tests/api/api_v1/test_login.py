@@ -8,6 +8,9 @@ settings = get_settings()
 
 
 def test_get_access_token(client: TestClient) -> None:
+    assert settings.FIRST_SUPERUSER
+    assert settings.FIRST_SUPERUSER_PASSWORD
+
     login_data = {
         "username": settings.FIRST_SUPERUSER,
         "password": settings.FIRST_SUPERUSER_PASSWORD,

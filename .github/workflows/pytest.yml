@@ -17,7 +17,7 @@ jobs:
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_TEST_DB: tests_oceans1876
+      POSTGRES_TEST_DB: tests_challenger_expedition
 
     # Service containers to run with `pytest` job
     services:
@@ -65,6 +65,6 @@ jobs:
           # Environment variables required by FastAPI
           SERVER_HOST: http://localhost
           SENTRY_DSN: ""
-          POSTGRES_DB: oceans1876
+          POSTGRES_DB: challenger_expedition
           FIRST_SUPERUSER: admin@example.com
           FIRST_SUPERUSER_PASSWORD: secret_password

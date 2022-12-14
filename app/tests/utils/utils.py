@@ -18,6 +18,9 @@ def random_email() -> str:
 
 
 def get_superuser_token_headers(client: TestClient) -> Dict[str, str]:
+    assert settings.FIRST_SUPERUSER
+    assert settings.FIRST_SUPERUSER_PASSWORD
+
     login_data = {
         "username": settings.FIRST_SUPERUSER,
         "password": settings.FIRST_SUPERUSER_PASSWORD,

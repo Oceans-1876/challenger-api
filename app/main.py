@@ -7,8 +7,9 @@ from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
 from starlette.responses import Response
 
+from app import PROJECT_ROOT
 from app.api.v1.router import api_router
-from app.core.config import PROJECT_ROOT, get_settings
+from app.core.config import get_settings
 from app.utils.logger import logger
 
 settings = get_settings()
@@ -20,12 +21,12 @@ app = FastAPI(
     redoc_url=None,
 )
 
-if settings.DEBUG:
-    app.mount(
-        "/fonts",
-        StaticFiles(directory=PROJECT_ROOT / "fonts"),
-        name="fonts",
-    )
+
+app.mount(
+    "/fonts",
+    StaticFiles(directory=PROJECT_ROOT / "fonts"),
+    name="fonts",
+)
 
 allowed_origins = [str(origin) for origin in settings.BACKEND_CORS_ORIGINS]
 

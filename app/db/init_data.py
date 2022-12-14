@@ -6,8 +6,8 @@ from datetime import datetime
 from functools import reduce
 from typing import Dict, List
 
-from app import crud, models, schemas
-from app.core.config import PROJECT_ROOT, get_settings
+from app import PROJECT_ROOT, crud, models, schemas
+from app.core.config import get_settings
 from app.db import base  # noqa: F401
 from app.db.session import SessionLocal
 
@@ -67,25 +67,29 @@ class Data:
             )
 
     def create_all(self) -> None:
-        self.create_superuser()
+        if settings.ENABLE_AUTH:
+            self.create_superuser()
         self.import_data_sources()
         self.import_species()
         self.import_stations()
 
     def create_superuser(self) -> None:
-        logger.info("Creating superuser")
-        user = crud.user.get_by_email(self.db, email=settings.FIRST_SUPERUSER)
+        if settings.FIRST_SUPERUSER and settings.FIRST_SUPERUSER_PASSWORD:
+            logger.info("Creating superuser")
+            user = crud.user.get_by_email(self.db, email=settings.FIRST_SUPERUSER)
 
-        if not user:
-            user_in = schemas.UserCreate(
-                email=settings.FIRST_SUPERUSER,
-                password=settings.FIRST_SUPERUSER_PASSWORD,
-                is_superuser=True,
-            )
-            crud.user.create(self.db, obj_in=user_in)
-            logger.info(f"Superuser created: {settings.FIRST_SUPERUSER}")
+            if not user:
+                user_in = schemas.UserCreate(
+                    email=settings.FIRST_SUPERUSER,
+                    password=settings.FIRST_SUPERUSER_PASSWORD,
+                    is_superuser=True,
+                )
+                crud.user.create(self.db, obj_in=user_in)
+                logger.info(f"Superuser created: {settings.FIRST_SUPERUSER}")
+            else:
+                logger.info(f"Superuser already exists: {settings.FIRST_SUPERUSER}")
         else:
-            logger.info(f"Superuser already exists: {settings.FIRST_SUPERUSER}")
+            logger.warning("Skipping creation of initial user")
 
     def import_data_sources(self) -> None:
         logger.info("Importing data sources")

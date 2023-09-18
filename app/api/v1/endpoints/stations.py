@@ -40,10 +40,13 @@ def read_stations_by_search(
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:
     """Retrieves the stations based on the given search expressions."""
+    relations = (
+        [stations_species_table] if expressions.uses_column("species_id") else None
+    )
     stations = crud.station.search(
         db,
         expressions=expressions,
-        relations=[stations_species_table],
+        relations=relations,
         order_by=order_by,
         limit=limit,
     )

@@ -27,7 +27,7 @@ class Expression(BaseModel):
     fuzzy: bool = False
     min_string_similarity: Optional[float] = Field(default=0.1)
 
-    def uses_column(self, name: str):
+    def uses_column(self, name: str) -> bool:
         return self.column_name == name
 
 
@@ -49,7 +49,7 @@ class ExpressionGroup(BaseModel):
             raise ValueError("a join operator is not needed for one expression")
         return v
 
-    def uses_column(self, name: str):
+    def uses_column(self, name: str) -> bool:
         for expression in self.expressions:
             if expression.uses_column(name):
                 return True

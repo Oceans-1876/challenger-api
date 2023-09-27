@@ -123,7 +123,7 @@ class Settings(BaseSettings):
         return v
 
     @validator("ENABLE_AUTH", pre=True)
-    def get_auth_enable(cls, v: Optional[str]) -> Optional[str]:
+    def get_auth_enable(cls, v: Optional[bool]) -> Optional[bool]:
         if os.environ.get("PYTHON_TEST"):
             return True
         return v

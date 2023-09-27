@@ -1,10 +1,12 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Type, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import Table
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
+from app.db.base_class import Base
 from app.models import stations_species_table
 
 router = APIRouter()
@@ -40,10 +42,13 @@ def read_stations_by_search(
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:
     """Retrieves the stations based on the given search expressions."""
+    relations: Optional[List[Union[Type[Base], Table]]] = (
+        [stations_species_table] if expressions.uses_column("species_id") else None
+    )
     stations = crud.station.search(
         db,
         expressions=expressions,
-        relations=[stations_species_table],
+        relations=relations,
         order_by=order_by,
         limit=limit,
     )

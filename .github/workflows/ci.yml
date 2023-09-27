@@ -15,7 +15,7 @@ jobs:
     steps:
       # Checkout source code
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Calculate some variables that are used later
       - name: Version information

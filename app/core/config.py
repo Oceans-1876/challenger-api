@@ -106,7 +106,7 @@ class Settings(BaseSettings):
             and values.get("EMAILS_FROM_EMAIL")
         )
 
-    EMAIL_TEST_USER: EmailStr = "test@example.com"  # type: ignore
+    EMAIL_TEST_USER: EmailStr = "test2@example.com"  # type: ignore
     FIRST_SUPERUSER: Optional[EmailStr] = None
     FIRST_SUPERUSER_PASSWORD: Optional[str] = None
 
@@ -120,6 +120,12 @@ class Settings(BaseSettings):
     def get_superuser_password(cls, v: Optional[str]) -> Optional[str]:
         if os.environ.get("PYTHON_TEST"):
             return "test"
+        return v
+
+    @validator("ENABLE_AUTH", pre=True)
+    def get_auth_enable(cls, v: Optional[str]) -> Optional[str]:
+        if os.environ.get("PYTHON_TEST"):
+            return True
         return v
 
     USERS_OPEN_REGISTRATION: bool = False

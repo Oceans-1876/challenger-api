@@ -6,7 +6,7 @@ on:
     types: [opened, edited]
 
 jobs:
-  perfrom-type-and-formatting-check:
+  perform-type-and-formatting-check:
     runs-on: ubuntu-20.04
 
     steps:

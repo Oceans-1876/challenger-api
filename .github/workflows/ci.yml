@@ -16,6 +16,8 @@ jobs:
       # Checkout source code
       - name: Check out source code
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       # Calculate some variables that are used later
       - name: Version information

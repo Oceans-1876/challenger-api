@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
-from app.models import SpeciesCommonNames, SpeciesSynonyms
+from app.models import SpeciesCommonNames, SpeciesSynonyms, stations_species_table
 
 router = APIRouter()
 
@@ -51,6 +51,7 @@ def read_species_by_search(
 @router.get("/fuzzymatch/", response_model=List[schemas.SpeciesSummary])
 def read_fuzzy_species_by_search(
     query_str: str,
+    station: Optional[str] = Query(None),
     db: Session = Depends(deps.get_db),
     min_string_similarity_score: float = 0.2,
     limit: int = 0,
@@ -91,13 +92,29 @@ def read_fuzzy_species_by_search(
         ],
     }
 
+    relations = [SpeciesCommonNames, SpeciesSynonyms]
+
+    if station:
+        expressions_dict = {
+            "join": "AND",
+            "expressions": [
+                expressions_dict,
+                {
+                    "column_name": "station_id",
+                    "search_term": station,
+                    "operator": "eq",
+                },
+            ],
+        }
+        relations.append(stations_species_table)
+
     expressions = schemas.ExpressionGroup(**expressions_dict)
 
     """Retrieves the species based on the given search expressions."""
     species = crud.species.search(
         db,
         expressions=expressions,
-        relations=[SpeciesCommonNames, SpeciesSynonyms],
+        relations=relations,
         order_by=order_by,
         limit=limit,
     )

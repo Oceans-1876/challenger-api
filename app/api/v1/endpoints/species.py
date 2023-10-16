@@ -1,10 +1,12 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Type, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import Table
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
+from app.db.base_class import Base
 from app.models import SpeciesCommonNames, SpeciesSynonyms, stations_species_table
 
 router = APIRouter()
@@ -92,7 +94,7 @@ def read_fuzzy_species_by_search(
         ],
     }
 
-    relations = [SpeciesCommonNames, SpeciesSynonyms]
+    relations: List[Union[Type[Base], Table]] = [SpeciesCommonNames, SpeciesSynonyms]
 
     if station:
         expressions_dict = {

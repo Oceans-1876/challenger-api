@@ -55,7 +55,7 @@ def read_fuzzy_species_by_search(
     query_str: str,
     station: Optional[str] = Query(None),
     db: Session = Depends(deps.get_db),
-    min_string_similarity_score: float = 0.12,
+    min_string_similarity_score: float = 0.1,
     limit: int = 0,
     order_by: Optional[List[str]] = Query(None),
 ) -> Any:

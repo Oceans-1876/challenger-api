@@ -10,4 +10,8 @@ def binomial_only(species: List[Species]) -> List[Species]:
     """
     # Unlike `current_name`, `current_canonical_full_name` doesn't include
     # author(s) and year of publication, so for a genus, there won't be any spaces.
-    return [sp for sp in species if " " in sp.current_canonical_full_name]
+    return [
+        sp
+        for sp in species
+        if sp.current_canonical_simple_name and " " in sp.current_canonical_simple_name
+    ]

@@ -8,6 +8,7 @@ from app import crud, schemas
 from app.api import deps
 from app.db.base_class import Base
 from app.models import SpeciesCommonNames, SpeciesSynonyms, stations_species_table
+from app.utils.species import binomial_only
 
 router = APIRouter()
 
@@ -30,7 +31,7 @@ def read_all_species(
 ) -> Any:
     """Retrieve all species."""
     species = crud.species.get_all(db, order_by=order_by)
-    return species
+    return binomial_only(species)
 
 
 @router.post("/search/", response_model=List[schemas.SpeciesSummary])
@@ -47,7 +48,7 @@ def read_species_by_search(
         order_by=order_by,
         limit=limit,
     )
-    return species
+    return binomial_only(species)
 
 
 @router.get("/fuzzymatch/", response_model=List[schemas.SpeciesSummary])
@@ -120,7 +121,7 @@ def read_fuzzy_species_by_search(
         order_by=order_by,
         limit=limit,
     )
-    return species
+    return binomial_only(species)
 
 
 @router.get(

@@ -10,5 +10,5 @@
 - Chris Navarro (@navarroc)
 - Kaveh Karimi-Asli (@ka7eh)
 - Michael Wieck-Sosa (@mwiecksosa)
-- Rashmil Panchani (@Rashmil-1999)
 - Olajide Jegede (@ojajegede)
+- Rashmil Panchani (@Rashmil-1999)

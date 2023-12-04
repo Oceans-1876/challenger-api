@@ -11,4 +11,4 @@
 - Kaveh Karimi-Asli (@ka7eh)
 - Michael Wieck-Sosa (@mwiecksosa)
 - Rashmil Panchani (@Rashmil-1999)
-- (@ojajegede)
+- Olajide Jegede (@ojajegede)

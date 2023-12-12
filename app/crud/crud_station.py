@@ -15,7 +15,8 @@ class CRUDStation(
         station = cast(
             Station, db.query(self.model).filter(self.model.name == id).first()
         )
-        station.species = binomial_only(station.species)
+        if station:
+            station.species = binomial_only(station.species)
         return station
 
 

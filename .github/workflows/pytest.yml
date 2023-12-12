@@ -3,7 +3,7 @@ name: Run unit test
 on:
   workflow_dispatch:
   pull_request:
-    types: [ opened, edited ]
+    types: [opened, edited, synchronize]
 
 jobs:
   pytest:
@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -68,3 +68,4 @@ jobs:
           POSTGRES_DB: challenger_expedition
           FIRST_SUPERUSER: admin@example.com
           FIRST_SUPERUSER_PASSWORD: secret_password
+          SECRET_KEY: pytest_secret_key

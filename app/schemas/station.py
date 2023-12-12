@@ -15,6 +15,10 @@ class StationBase(BaseModel):
     name: str
     date: date
     coordinates: List[float] = Field(min_items=2, max_items=2)
+    fao_area: int
+    location: str
+    gear: Optional[str]
+    sediment_sample: Optional[str]
 
     @validator("coordinates", pre=True)
     def to_point(cls, value: WKBElement) -> List[float]:

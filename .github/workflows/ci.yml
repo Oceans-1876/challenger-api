@@ -15,7 +15,7 @@ jobs:
     steps:
       # Checkout source code
       - name: Check out source code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Calculate some variables that are used later
       - name: Version information
@@ -29,7 +29,7 @@ jobs:
           fi
           echo "GITHUB_BRANCH=${BRANCH}" >> $GITHUB_ENV
           if [ "$BRANCH" == "main" ]; then
-            version=$(cat package.json | grep \"version\" | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,",]//g' | tr -d '[[:space:]]')
+            version=$(awk -F= '/^version/ { print $2}' pyproject.toml | sed 's/[ "]//g')
             tags="latest"
             oldversion=""
             while [ "${oldversion}" != "${version}" ]; do
@@ -52,6 +52,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@3.04
         env:
           BRANCH: ${{ env.GITHUB_BRANCH }}
+          VERSION: ${{ env.VERSION }}
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha }}
         with:
@@ -60,7 +61,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io
           tags: "${{ env.TAGS }}"
-          buildargs: BRANCH,BUILDNUMBER,GITSHA1
+          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
           dockerfile: docker/Dockerfile
 
       - name: Deploy to prod server

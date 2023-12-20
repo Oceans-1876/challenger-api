@@ -3,7 +3,7 @@ name: Run unit test
 on:
   workflow_dispatch:
   pull_request:
-    types: [ opened, edited ]
+    types: [opened, edited, synchronize]
 
 jobs:
   pytest:
